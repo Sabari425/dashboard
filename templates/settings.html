@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head class="settings">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Settings Dashboard for system preferences">
+    <meta name="keywords" content="settings, dashboard, admin, responsive, boxicons">
+    <meta name="author" content="Admin Dashboard">
+    <title>Settings - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #6b7280;
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --sidebar-bg: #1f2937;
+            --sidebar-text: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1f2937;
+            --text-color: #ffffff;
+            --sidebar-bg: #111827;
+            --sidebar-text: #d1d5db;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: "Poppins", sans-serif;
+            font-weight: 600;
+            font-style: normal;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            transition: transform 0.3s ease;
+            box-shadow: 0.3s;
+
+            transition: transform 0.3s ease;
+            box-shadow: 0.3s;
+            border-top-right-radius: 1.25rem;
+            border-bottom-right-radius: 1.25rem;
+            box-shadow: 2px 0 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--secondary-color);
+            border-top-right-radius: 1.25rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: background 0.3s, color 0.3s, transform 0.2s;
+            border-radius: 0.75rem;
+            margin: 0.25rem 1rem;
+            font-weight: 500;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.bg-gray-700 {
+            background: linear-gradient(90deg, var(--primary-color) 60%, var(--secondary-color) 100%);
+            color: #fff;
+            transform: scale(1.045);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.10);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease, box-shadow 0.3s, background 0.3s;
+            border-radius: 1.5rem;
+            background: linear-gradient(120deg, #f0f4ff 0%, #f9fafb 100%);
+            min-height: 100vh;
+            box-shadow: 0 4px 24px rgba(59, 130, 246, 0.04);
+        }
+
+        .main-content:hover,
+        .main-content:focus-within {
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.12);
+            background: linear-gradient(120deg, #e0eaff 0%, #f3f6fd 100%);
+            transform: scale(1.);
+        }
+
+        .card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--secondary-color);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.06);
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.035);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+            border-color: var(--primary-color);
+        }
+
+        .activity-table th,
+        .activity-table td,
+        .metrics-table th,
+        .metrics-table td,
+        .users-table th,
+        .users-table td,
+        .settings-table th,
+        .settings-table td,
+        .login-table th,
+        .login-table td {
+            padding: 1rem;
+            border: 1px solid var(--secondary-color);
+            text-align: left;
+            transition: background-color 0.3s, color 0.3s, transform 0.2s;
+            border-radius: 0.5rem;
+        }
+
+        .activity-table th,
+        .metrics-table th,
+        .users-table th,
+        .settings-table th,
+        .login-table th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .activity-table tbody tr,
+        .metrics-table tr,
+        .users-table tr,
+        .settings-table tr,
+        .login-table tr {
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            border-radius: 0.5rem;
+        }
+
+        .activity-table tbody tr:hover,
+        .activity-table tbody tr:focus,
+        .metrics-table tr:hover,
+        .users-table tr:hover,
+        .settings-table tr:hover,
+        .login-table tr:hover {
+            background-color: rgba(59, 130, 246, 0.12);
+            transform: scale(1.01) translateX(6px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.12);
+            z-index: 1;
+        }
+
+        .settings-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background-color: var(--bg-color);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.05);
+        }
+
+        .settings-table th,
+        .settings-table td {
+            padding: 1rem;
+            border: 1px solid var(--secondary-color);
+            text-align: left;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .settings-table tr {
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .settings-table tr:hover {
+            background: rgba(59, 130, 246, 0.08);
+            transform: scale(1.01);
+        }
+
+        .settings-table th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border-top: none;
+        }
+
+        .search-bar input,
+        select {
+            padding: 0.5rem;
+            border: 1px solid var(--secondary-color);
+            border-radius: 0.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-bar input:focus,
+        select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+            outline: none;
+        }
+
+        button,
+        [type="submit"] {
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+            border-radius: 0.5rem;
+        }
+
+        button:hover,
+        [type="submit"]:hover {
+            background: linear-gradient(90deg, var(--primary-color) 60%, var(--secondary-color) 100%);
+            color: #fff;
+            transform: scale(1.08);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);
+        }
+
+        #theme-toggle {
+            transition: background 0.2s, transform 0.2s;
+            border-radius: 50%;
+        }
+
+        #theme-toggle:hover {
+            background: var(--primary-color);
+            color: #fff;
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        #toggle-sidebar {
+            transition: color 0.2s, transform 0.2s;
+            border-radius: 0.75rem;
+        }
+
+        #toggle-sidebar:hover {
+            color: var(--primary-color);
+            background: rgba(59, 130, 246, 0.08);
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                border-radius: 0 1.25rem 1.25rem 0;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                border-radius: 1.25rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 1rem;
+                border-radius: 1rem;
+            }
+
+            .settings-table th,
+            .settings-table td {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .main-content {
+                padding: 0.5rem;
+                border-radius: 0.75rem;
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .bx-spin {
+            animation: spin 2s linear infinite;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+
+<body data-theme="light">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2 class="text-xl font-bold">Admin Dashboard</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/dashboard"><i class="bx bx-home-alt mr-2"></i> Dashboard</a>
+            <a href="/analytics"><i class="bx bx-bar-chart-alt-2 mr-2"></i> Analytics</a>
+            <a href="/users"><i class="bx bx-user mr-2"></i> Users</a>
+            <a href="/profile"><i class="bx bx-id-card mr-2"></i> Profile</a>
+            <a href="/settings" class="bg-gray-700"><i class="bx bx-cog mr-2"></i> Settings</a>
+            <a href="/logout"><i class="bx bx-log-out mr-2"></i> Logout</a>
+        </nav>
+        <div class="mt-8 px-4">
+            <button id="sidebar-collapse" class="w-full py-2 bg-gray-800 text-white rounded mb-2">
+                <i class="bx bx-chevron-left"></i> Collapse Sidebar
+            </button>
+            <div class="text-xs text-gray-400 mt-4">Tip: Press <kbd>Ctrl+K</kbd> to search logs</div>
+        </div>
+        <style>
+            #tools-list .edit-tool {
+                margin-right: 1.5rem !important;
+            }
+        </style>
+    </aside>
+
+    <main class="main-content">
+        <header class="flex justify-between items-center mb-6">
+            <div class="flex items-center">
+                <button id="toggle-sidebar" class="text-2xl mr-4">
+                    <i class="bx bx-menu"></i>
+                </button>
+                <h1 class="text-2xl font-bold">Settings</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700" aria-label="Toggle theme">
+                    <i class="bx bx-moon"></i>
+                </button>
+                <style>
+                    [data-theme="dark"] {
+                        --bg-color: #181e29;
+                        --text-color: #f3f4f6;
+                        --sidebar-bg: #151922;
+                        --sidebar-text: #e5e7eb;
+                        --primary-color: #2563eb;
+                        --secondary-color: #374151;
+                    }
+                    [data-theme="dark"] .main-content {
+                        background: linear-gradient(120deg, #232b3b 0%, #181e29 100%);
+                        box-shadow: 0 4px 24px rgba(37, 99, 235, 0.10);
+                    }
+                    [data-theme="dark"] .main-content:hover,
+                    [data-theme="dark"] .main-content:focus-within {
+                        background: linear-gradient(120deg, #232b3b 0%, #232b3b 100%);
+                        box-shadow: 0 8px 32px rgba(37, 99, 235, 0.18);
+                    }
+                    [data-theme="dark"] .card {
+                        background-color: #232b3b;
+                        border-color: #374151;
+                        color: #e5e7eb;
+                        box-shadow: 0 2px 12px rgba(37, 99, 235, 0.10);
+                    }
+                    [data-theme="dark"] .card:hover {
+                        border-color: #2563eb;
+                        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.22);
+                    }
+                    [data-theme="dark"] .settings-table {
+                        background-color: #232b3b;
+                        color: #e5e7eb;
+                        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+                    }
+                    [data-theme="dark"] .settings-table th {
+                        background-color: #2563eb;
+                        color: #fff;
+                    }
+                    [data-theme="dark"] .settings-table td {
+                        border-color: #374151;
+                        color: #e5e7eb;
+                        background: transparent;
+                    }
+                    [data-theme="dark"] .settings-table tr:hover {
+                        background: rgba(37, 99, 235, 0.13);
+                    }
+                    [data-theme="dark"] .search-bar input,
+                    [data-theme="dark"] select {
+                        background: #181e29;
+                        color: #e5e7eb;
+                        border-color: #374151;
+                    }
+                    [data-theme="dark"] .search-bar input:focus,
+                    [data-theme="dark"] select:focus {
+                        border-color: #2563eb;
+                        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18);
+                    }
+                    [data-theme="dark"] button,
+                    [data-theme="dark"] [type="submit"] {
+                        background: #232b3b;
+                        color: #e5e7eb;
+                    }
+                    [data-theme="dark"] button:hover,
+                    [data-theme="dark"] [type="submit"]:hover {
+                        background: linear-gradient(90deg, #2563eb 60%, #374151 100%);
+                        color: #fff;
+                    }
+                    [data-theme="dark"] #theme-toggle {
+                        background: #232b3b;
+                        color: #e5e7eb;
+                    }
+                    [data-theme="dark"] #theme-toggle:hover {
+                        background: #2563eb;
+                        color: #fff;
+                    }
+                    [data-theme="dark"] #fullscreen-toggle {
+                        background: #232b3b;
+                        color: #e5e7eb;
+                    }
+                    [data-theme="dark"] #fullscreen-toggle:hover {
+                        background: #2563eb;
+                        color: #fff;
+                    }
+                    [data-theme="dark"] #scroll-top-btn {
+                        background: #2563eb;
+                        color: #fff;
+                    }
+                    [data-theme="dark"] .tool-item {
+                        color: #e5e7eb;
+                    }
+                    [data-theme="dark"] .bg-blue-100 { background-color: #22325a !important; }
+                    [data-theme="dark"] .hover\:bg-blue-200:hover { background-color: #2563eb !important; }
+                    [data-theme="dark"] .bg-green-100 { background-color: #1e2e23 !important; }
+                    [data-theme="dark"] .hover\:bg-green-200:hover { background-color: #22c55e !important; }
+                    [data-theme="dark"] .bg-yellow-100 { background-color: #3a2e13 !important; }
+                    [data-theme="dark"] .hover\:bg-yellow-200:hover { background-color: #eab308 !important; }
+                    [data-theme="dark"] .bg-red-100 { background-color: #3a1e1e !important; }
+                    [data-theme="dark"] .hover\:bg-red-200:hover { background-color: #ef4444 !important; }
+                    [data-theme="dark"] .bg-purple-100 { background-color: #2e2340 !important; }
+                    [data-theme="dark"] .hover\:bg-purple-200:hover { background-color: #a78bfa !important; }
+                    [data-theme="dark"] .modal,
+                    [data-theme="dark"] .bg-white {
+                        background-color: #232b3b !important;
+                        color: #e5e7eb !important;
+                    }
+                    [data-theme="dark"] .text-gray-600 { color: #b6bbc7 !important; }
+                    [data-theme="dark"] .text-gray-400 { color: #9ca3af !important; }
+                    [data-theme="dark"] .text-gray-200 { color: #e5e7eb !important; }
+                    [data-theme="dark"] .border,
+                    [data-theme="dark"] .border-gray-300,
+                    [data-theme="dark"] .border-gray-400 {
+                        border-color: #374151 !important;
+                    }
+                    /* Additional color corrections for dark mode */
+                    [data-theme="dark"] .text-green-600 { color: #22c55e !important; }
+                    [data-theme="dark"] .text-blue-500 { color: #60a5fa !important; }
+                    [data-theme="dark"] .bg-gray-200 { background-color: #232b3b !important; }
+                    [data-theme="dark"] .bg-gray-300 { background-color: #232b3b !important; }
+                    [data-theme="dark"] .bg-gray-700 { background-color: #232b3b !important; }
+                    [data-theme="dark"] .text-red-600 { color: #ef4444 !important; }
+                    [data-theme="dark"] .text-blue-600 { color: #60a5fa !important; }
+                    [data-theme="dark"] .bg-green-500 { background-color: #22c55e !important; color: #fff !important; }
+                    [data-theme="dark"] .bg-blue-500 { background-color: #2563eb !important; color: #fff !important; }
+
+                    /* Correction: Padding for edit/delete button backgrounds in all areas */
+                    .edit-tool, .delete-tool, .edit-deadline, .delete-deadline, .edit-log, .delete-log {
+                        padding: 0.25rem 0.75rem !important;
+                        border-radius: 0.375rem !important;
+                        background: transparent;
+                        transition: 
+                            background 0.18s cubic-bezier(.4,0,.2,1),
+                            color 0.18s cubic-bezier(.4,0,.2,1),
+                            box-shadow 0.18s cubic-bezier(.4,0,.2,1),
+                            transform 0.18s cubic-bezier(.4,0,.2,1);
+                        margin-right: 0 !important;
+                        outline: none;
+                        border: none;
+                        cursor: pointer;
+                        position: relative;
+                        z-index: 1;
+                    }
+                    /* Add spacing between edit and delete buttons */
+                    .edit-tool, .edit-deadline, .edit-log {
+                        margin-right: 0.5rem !important;
+                    }
+
+                    /* Perfect hover effect for buttons */
+                    .edit-tool:hover, .edit-deadline:hover, .edit-log:hover {
+                        background: linear-gradient(90deg, #e0e7ff 0%, #bae6fd 100%);
+                        color: #2563eb !important;
+                        box-shadow: 0 2px 8px rgba(59,130,246,0.10);
+                        transform: translateY(-2px) scale(1.07);
+                    }
+                    .delete-tool:hover, .delete-deadline:hover, .delete-log:hover {
+                        background: linear-gradient(90deg, #fee2e2 0%, #fca5a5 100%);
+                        color: #ef4444 !important;
+                        box-shadow: 0 2px 8px rgba(239,68,68,0.10);
+                        transform: translateY(-2px) scale(1.07);
+                    }
+                    .edit-tool:focus, .delete-tool:focus,
+                    .edit-deadline:focus, .delete-deadline:focus,
+                    .edit-log:focus, .delete-log:focus {
+                        box-shadow: 0 0 0 2px #2563eb33;
+                        outline: none;
+                    }
+
+                    /* Dark mode hover effect for buttons */
+                    [data-theme="dark"] .edit-tool:hover,
+                    [data-theme="dark"] .edit-deadline:hover,
+                    [data-theme="dark"] .edit-log:hover {
+                        background: linear-gradient(90deg, #22325a 0%, #2563eb 100%) !important;
+                        color: #fff !important;
+                        box-shadow: 0 2px 8px rgba(37,99,235,0.18);
+                        transform: translateY(-2px) scale(1.07);
+                    }
+                    [data-theme="dark"] .delete-tool:hover,
+                    [data-theme="dark"] .delete-deadline:hover,
+                    [data-theme="dark"] .delete-log:hover {
+                        background: linear-gradient(90deg, #3a1e1e 0%, #ef4444 100%) !important;
+                        color: #fff !important;
+                        box-shadow: 0 2px 8px rgba(239,68,68,0.18);
+                        transform: translateY(-2px) scale(1.07);
+                    }
+
+                    /* Quick Tools: keep edit/delete buttons in correct position */
+                    #tools-list .tool-item {
+                        position: relative;
+                        padding-top: 2.5rem !important;
+                    }
+                    #tools-list .edit-tool,
+                    #tools-list .delete-tool {
+                        position: absolute;
+                        top: 0.75rem;
+                        /* right values set below for correct spacing */
+                    }
+                    #tools-list .edit-tool {
+                        right: 3.5rem;
+                    }
+                    #tools-list .delete-tool {
+                        right: 0.75rem;
+                    }
+                    @media (max-width: 640px) {
+                        #tools-list .edit-tool {
+                            right: 2.5rem;
+                        }
+                        #tools-list .delete-tool {
+                            right: 0.5rem;
+                        }
+                    }
+                </style>
+                <button id="fullscreen-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700" aria-label="Toggle fullscreen">
+                    <i class="bx bx-fullscreen"></i>
+                </button>
+                <span id="header-name">Welcome, Admin</span>
+            </div>
+        </header>
+
+        <section class="card mb-6">
+            <h2 class="text-xl font-semibold mb-4">System Preferences</h2>
+            <form id="settings-form" autocomplete="off">
+                <div class="mb-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="notifications" class="mr-2">
+                        Enable Project Notifications
+                    </label>
+                </div>
+                <div class="mb-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="dark-theme" class="mr-2">
+                        Default to Dark Theme
+                    </label>
+                </div>
+                <div class="mb-4">
+                    <label for="language" class="block mb-1">Preferred Language</label>
+                    <select id="language" name="language" class="border p-2 rounded w-full">
+                        <option value="en">English</option>
+                        <option value="de">German</option>
+                        <option value="jp">Japanese</option>
+                        <option value="fr">French</option>
+                        <option value="es">Spanish</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="study-mode" class="block mb-1">Study Mode</label>
+                    <select id="study-mode" name="study-mode" class="border p-2 rounded w-full">
+                        <option value="focus">Focus (No distractions)</option>
+                        <option value="collaborative">Collaborative (Group Study)</option>
+                        <option value="simulation">Simulation Practice</option>
+                        <option value="review">Review Mode</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="enable-simulations" class="mr-2">
+                        Enable Robotics Simulations
+                    </label>
+                </div>
+                <div class="mb-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="auto-save" class="mr-2">
+                        Enable Auto-Save Settings
+                    </label>
+                </div>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Save Settings</button>
+                <span id="settings-status" class="ml-4 text-green-600 hidden">Saved!</span>
+            </form>
+        </section>
+
+        <section class="card mb-6">
+            <h2 class="text-xl font-semibold mb-4 flex items-center justify-between">
+                Quick Tools
+                <button id="add-tool-btn" class="ml-2 px-2 py-1 bg-green-500 text-white rounded text-sm">Add Tool</button>
+            </h2>
+            <div id="tools-list" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            <div id="tool-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+                <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                    <h3 id="tool-modal-title" class="text-lg font-bold mb-4">Add Tool</h3>
+                    <form id="tool-form" autocomplete="off">
+                        <div class="mb-2">
+                            <label class="block mb-1">Tool Name</label>
+                            <input type="text" id="tool-name" class="w-full border rounded p-2" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="block mb-1">Description</label>
+                            <input type="text" id="tool-desc" class="w-full border rounded p-2" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="block mb-1">Icon (Boxicons class)</label>
+                            <input type="text" id="tool-icon" class="w-full border rounded p-2" placeholder="e.g. bx-cube" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="block mb-1">Link (URL)</label>
+                            <input type="url" id="tool-link" class="w-full border rounded p-2" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="block mb-1">Color</label>
+                            <select id="tool-color" class="w-full border rounded p-2">
+                                <option value="bg-blue-100 hover:bg-blue-200">Blue</option>
+                                <option value="bg-green-100 hover:bg-green-200">Green</option>
+                                <option value="bg-yellow-100 hover:bg-yellow-200">Yellow</option>
+                                <option value="bg-red-100 hover:bg-red-200">Red</option>
+                                <option value="bg-purple-100 hover:bg-purple-200">Purple</option>
+                            </select>
+                        </div>
+                        <div class="flex justify-end gap-2 mt-4">
+                            <button type="button" id="cancel-tool" class="px-3 py-1 bg-gray-300 rounded">Cancel</button>
+                            <button type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="card mb-6">
+            <h2 class="text-xl font-semibold mb-4 flex items-center justify-between">
+                Upcoming Deadlines
+                <button id="add-deadline-btn" class="ml-2 px-2 py-1 bg-green-500 text-white rounded text-sm">Add Deadline</button>
+            </h2>
+            <ul id="deadlines-list" class="list-disc pl-6 space-y-2"></ul>
+            <div id="deadline-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+                <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                    <h3 id="deadline-modal-title" class="text-lg font-bold mb-4">Add Deadline</h3>
+                    <form id="deadline-form" autocomplete="off">
+                        <div class="mb-2">
+                            <label class="block mb-1">Title</label>
+                            <input type="text" id="deadline-title" class="w-full border rounded p-2" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="block mb-1">Due Date</label>
+                            <input type="date" id="deadline-date" class="w-full border rounded p-2" required>
+                        </div>
+                        <div class="flex justify-end gap-2 mt-4">
+                            <button type="button" id="cancel-deadline" class="px-3 py-1 bg-gray-300 rounded">Cancel</button>
+                            <button type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 class="text-xl font-semibold mb-4 flex items-center justify-between">
+                Settings Audit Log
+                <button id="export-log-btn" class="ml-2 px-2 py-1 bg-blue-500 text-white rounded text-sm">Export CSV</button>
+            </h2>
+            <div class="search-bar mb-4 flex gap-2">
+                <label for="settings-search" class="sr-only">Search settings log</label>
+                <input type="text" id="settings-search" placeholder="Search settings changes..." class="w-full">
+                <button id="clear-search" class="px-2 py-1 bg-gray-300 rounded" title="Clear search">&times;</button>
+            </div>
+            <table class="settings-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Change</th>
+                        <th>Details</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="settings-table"></tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="text-right">
+                            <button id="add-log-btn" class="px-3 py-1 bg-green-500 text-white rounded text-sm mt-2">Add Log Entry</button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div id="log-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+                <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                    <h3 id="log-modal-title" class="text-lg font-bold mb-4">Add Log Entry</h3>
+                    <form id="log-form" autocomplete="off">
+                        <div class="mb-2">
+                            <label class="block mb-1">Date</label>
+                            <input type="date" id="log-date" class="w-full border rounded p-2" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="block mb-1">Time</label>
+                            <input type="time" id="log-time" class="w-full border rounded p-2" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="block mb-1">Change</label>
+                            <input type="text" id="log-change" class="w-full border rounded p-2" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="block mb-1">Details</label>
+                            <input type="text" id="log-details" class="w-full border rounded p-2" required>
+                        </div>
+                        <div class="flex justify-end gap-2 mt-4">
+                            <button type="button" id="cancel-log" class="px-3 py-1 bg-gray-300 rounded">Cancel</button>
+                            <button type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <button id="scroll-top-btn" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg hidden z-50" title="Scroll to top">
+            <i class="bx bx-chevron-up text-2xl"></i>
+        </button>
+        <script>
+        // --- Quick Tools Editable/Addable with LocalStorage ---
+        let tools = JSON.parse(localStorage.getItem('tools')) || [
+            {
+                name: "Robotics Simulations",
+                desc: "Practice with virtual robots",
+                icon: "bx-cube",
+                link: "robotics-simulations.html",
+                color: "bg-blue-100 hover:bg-blue-200"
+            },
+            {
+                name: "Automation Tutorials",
+                desc: "Step-by-step guides",
+                icon: "bx-book-open",
+                link: "automation-tutorials.html",
+                color: "bg-green-100 hover:bg-green-200"
+            },
+            {
+                name: "Project Ideas",
+                desc: "Explore and track project topics",
+                icon: "bx-bulb",
+                link: "project-ideas.html",
+                color: "bg-yellow-100 hover:bg-yellow-200"
+            }
+        ];
+        function saveTools() {
+            localStorage.setItem('tools', JSON.stringify(tools));
+        }
+        function renderTools() {
+            const toolsList = document.getElementById('tools-list');
+            toolsList.innerHTML = '';
+            tools.forEach((tool, i) => {
+                const div = document.createElement('div');
+                div.className = `tool-item block p-4 rounded transition relative ${tool.color}`;
+                div.setAttribute('data-index', i);
+                div.innerHTML = `
+                    <button class="edit-tool absolute top-2 right-8 text-xs text-blue-600">Edit</button>
+                    <button class="delete-tool absolute top-2 right-2 text-xs text-red-600">Delete</button>
+                    <a href="${tool.link}" target="_blank" tabindex="0" aria-label="${tool.name}">
+                        <i class="bx ${tool.icon} text-2xl mb-2"></i>
+                        <div class="font-semibold">${tool.name}</div>
+                        <div class="text-sm text-gray-600">${tool.desc}</div>
+                    </a>
+                `;
+                toolsList.appendChild(div);
+            });
+        }
+        renderTools();
+        document.getElementById('add-tool-btn').onclick = function() {
+            document.getElementById('tool-modal-title').textContent = "Add Tool";
+            document.getElementById('tool-form').reset();
+            document.getElementById('tool-modal').dataset.editing = '';
+            document.getElementById('tool-modal').classList.remove('hidden');
+        };
+        document.getElementById('cancel-tool').onclick = function() {
+            document.getElementById('tool-modal').classList.add('hidden');
+        };
+        document.getElementById('tools-list').onclick = function(e) {
+            const idx = e.target.closest('.tool-item')?.dataset.index;
+            if (e.target.classList.contains('edit-tool')) {
+                const tool = tools[idx];
+                document.getElementById('tool-modal-title').textContent = "Edit Tool";
+                document.getElementById('tool-name').value = tool.name;
+                document.getElementById('tool-desc').value = tool.desc;
+                document.getElementById('tool-icon').value = tool.icon;
+                document.getElementById('tool-link').value = tool.link;
+                document.getElementById('tool-color').value = tool.color;
+                document.getElementById('tool-modal').dataset.editing = idx;
+                document.getElementById('tool-modal').classList.remove('hidden');
+            }
+            if (e.target.classList.contains('delete-tool')) {
+                if (confirm('Delete this tool?')) {
+                    tools.splice(idx, 1);
+                    saveTools();
+                    renderTools();
+                }
+            }
+        };
+        document.getElementById('tool-form').onsubmit = function(e) {
+            e.preventDefault();
+            const name = document.getElementById('tool-name').value;
+            const desc = document.getElementById('tool-desc').value;
+            const icon = document.getElementById('tool-icon').value;
+            const link = document.getElementById('tool-link').value;
+            const color = document.getElementById('tool-color').value;
+            const idx = document.getElementById('tool-modal').dataset.editing;
+            if (idx === '' || idx === undefined) {
+                tools.push({ name, desc, icon, link, color });
+            } else {
+                tools[idx] = { name, desc, icon, link, color };
+            }
+            saveTools();
+            renderTools();
+            document.getElementById('tool-modal').classList.add('hidden');
+        };
+
+        // --- Deadlines Editable/Addable with LocalStorage ---
+        let deadlines = JSON.parse(localStorage.getItem('deadlines')) || [
+            { title: "Robotics Lab Report", date: "2025-06-10" },
+            { title: "Automation Project Demo", date: "2025-06-15" },
+            { title: "AI in Robotics Assignment", date: "2025-06-20" }
+        ];
+        function saveDeadlines() {
+            localStorage.setItem('deadlines', JSON.stringify(deadlines));
+        }
+        function renderDeadlines() {
+            const list = document.getElementById('deadlines-list');
+            list.innerHTML = '';
+            deadlines.forEach((d, i) => {
+                const li = document.createElement('li');
+                li.className = "deadline-item flex items-center justify-between";
+                li.setAttribute('data-index', i);
+                li.innerHTML = `
+                    <span>
+                        <span class="font-medium editable" data-field="title">${d.title}</span> - 
+                        <span class="text-gray-600 editable" data-field="date">Due: ${d.date}</span>
+                    </span>
+                    <span>
+                        <button class="edit-deadline text-xs text-blue-600 mr-2">Edit</button>
+                        <button class="delete-deadline text-xs text-red-600">Delete</button>
+                    </span>
+                `;
+                list.appendChild(li);
+            });
+        }
+        renderDeadlines();
+        document.getElementById('add-deadline-btn').onclick = function() {
+            document.getElementById('deadline-modal-title').textContent = "Add Deadline";
+            document.getElementById('deadline-form').reset();
+            document.getElementById('deadline-modal').dataset.editing = '';
+            document.getElementById('deadline-modal').classList.remove('hidden');
+        };
+        document.getElementById('cancel-deadline').onclick = function() {
+            document.getElementById('deadline-modal').classList.add('hidden');
+        };
+        document.getElementById('deadlines-list').onclick = function(e) {
+            const idx = e.target.closest('.deadline-item')?.dataset.index;
+            if (e.target.classList.contains('edit-deadline')) {
+                const d = deadlines[idx];
+                document.getElementById('deadline-modal-title').textContent = "Edit Deadline";
+                document.getElementById('deadline-title').value = d.title;
+                document.getElementById('deadline-date').value = d.date;
+                document.getElementById('deadline-modal').dataset.editing = idx;
+                document.getElementById('deadline-modal').classList.remove('hidden');
+            }
+            if (e.target.classList.contains('delete-deadline')) {
+                if (confirm('Delete this deadline?')) {
+                    deadlines.splice(idx, 1);
+                    saveDeadlines();
+                    renderDeadlines();
+                }
+            }
+        };
+        document.getElementById('deadline-form').onsubmit = function(e) {
+            e.preventDefault();
+            const title = document.getElementById('deadline-title').value;
+            const date = document.getElementById('deadline-date').value;
+            const idx = document.getElementById('deadline-modal').dataset.editing;
+            if (idx === '' || idx === undefined) {
+                deadlines.push({ title, date });
+            } else {
+                deadlines[idx] = { title, date };
+            }
+            saveDeadlines();
+            renderDeadlines();
+            document.getElementById('deadline-modal').classList.add('hidden');
+        };
+
+        // --- Settings Log Editable/Addable with LocalStorage ---
+        let logs = JSON.parse(localStorage.getItem('settingsLogs')) || [
+            ["2025-05-28", "09:00 AM", "Simulations enabled", "Robotics simulations turned on"],
+            ["2025-05-27", "10:00 AM", "Study mode changed", "Set to Focus mode"],
+            ["2025-05-26", "11:30 AM", "Notifications enabled", "Project notifications turned on"],
+            ["2025-05-25", "3:45 PM", "Theme changed", "Switched to dark theme"],
+            ["2025-05-24", "9:30 AM", "Language updated", "Changed to German"],
+            ["2025-05-23", "2:15 PM", "Simulations disabled", "Robotics simulations turned off"]
+        ];
+        function saveLogs() {
+            localStorage.setItem('settingsLogs', JSON.stringify(logs));
+        }
+        function renderLogs() {
+            const tbody = document.getElementById('settings-table');
+            tbody.innerHTML = '';
+            logs.forEach((log, i) => {
+                const tr = document.createElement('tr');
+                tr.dataset.change = log[2];
+                tr.innerHTML = `
+                    <td contenteditable="true">${log[0]}</td>
+                    <td contenteditable="true">${log[1]}</td>
+                    <td contenteditable="true">${log[2]}</td>
+                    <td contenteditable="true">${log[3]}</td>
+                    <td>
+                        <button class="edit-log text-xs text-blue-600 mr-2">Edit</button>
+                        <button class="delete-log text-xs text-red-600">Delete</button>
+                    </td>
+                `;
+                tr.setAttribute('data-index', i);
+                tbody.appendChild(tr);
+            });
+        }
+        renderLogs();
+        document.getElementById('add-log-btn').onclick = function() {
+            document.getElementById('log-modal-title').textContent = "Add Log Entry";
+            document.getElementById('log-form').reset();
+            document.getElementById('log-modal').dataset.editing = '';
+            document.getElementById('log-modal').classList.remove('hidden');
+        };
+        document.getElementById('cancel-log').onclick = function() {
+            document.getElementById('log-modal').classList.add('hidden');
+        };
+        document.getElementById('settings-table').onclick = function(e) {
+            const row = e.target.closest('tr');
+            const idx = row?.dataset.index;
+            if (!row) return;
+            if (e.target.classList.contains('edit-log')) {
+                document.getElementById('log-modal-title').textContent = "Edit Log Entry";
+                document.getElementById('log-date').value = row.children[0].textContent.trim();
+                document.getElementById('log-time').value = row.children[1].textContent.trim();
+                document.getElementById('log-change').value = row.children[2].textContent.trim();
+                document.getElementById('log-details').value = row.children[3].textContent.trim();
+                document.getElementById('log-modal').dataset.editing = idx;
+                document.getElementById('log-modal').classList.remove('hidden');
+            }
+            if (e.target.classList.contains('delete-log')) {
+                if (confirm('Delete this log entry?')) {
+                    logs.splice(idx, 1);
+                    saveLogs();
+                    renderLogs();
+                }
+            }
+        };
+        document.getElementById('log-form').onsubmit = function(e) {
+            e.preventDefault();
+            const date = document.getElementById('log-date').value;
+            const time = document.getElementById('log-time').value;
+            const change = document.getElementById('log-change').value;
+            const details = document.getElementById('log-details').value;
+            const idx = document.getElementById('log-modal').dataset.editing;
+            if (idx === '' || idx === undefined) {
+                logs.unshift([date, time, change, details]);
+            } else {
+                logs[idx] = [date, time, change, details];
+            }
+            saveLogs();
+            renderLogs();
+            document.getElementById('log-modal').classList.add('hidden');
+        };
+
+        // --- Export Log to CSV ---
+        document.getElementById('export-log-btn').onclick = function() {
+            let csv = "Date,Time,Change,Details\n";
+            logs.forEach(row => {
+                csv += row.map(v => `"${v.replace(/"/g, '""')}"`).join(",") + "\n";
+            });
+            const blob = new Blob([csv], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "settings-log.csv";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
+
+        // --- Settings Search and Clear ---
+        const settingsSearch = document.querySelector('#settings-search');
+        const clearSearch = document.getElementById('clear-search');
+        settingsSearch.addEventListener('input', () => {
+            const query = settingsSearch.value.toLowerCase();
+            document.querySelectorAll('#settings-table tr').forEach(row => {
+                const change = row.dataset.change?.toLowerCase() || '';
+                row.style.display = change.includes(query) ? '' : 'none';
+            });
+        });
+        clearSearch.onclick = function() {
+            settingsSearch.value = '';
+            settingsSearch.dispatchEvent(new Event('input'));
+        };
+
+        // --- Scroll to Top Button ---
+        const scrollBtn = document.getElementById('scroll-top-btn');
+        window.addEventListener('scroll', () => {
+            scrollBtn.classList.toggle('hidden', window.scrollY < 200);
+        });
+        scrollBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // --- Sidebar Collapse/Expand ---
+        document.getElementById('sidebar-collapse').onclick = function() {
+            document.querySelector('.sidebar').classList.toggle('hidden');
+            document.querySelector('.main-content').classList.toggle('full');
+        };
+        document.getElementById('toggle-sidebar').onclick = function() {
+            document.querySelector('.sidebar').classList.toggle('hidden');
+            document.querySelector('.main-content').classList.toggle('full');
+        };
+
+        // --- Theme Toggle with LocalStorage ---
+        const themeToggle = document.querySelector('#theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', newTheme);
+            themeToggle.querySelector('i').classList.toggle('bx-moon');
+            themeToggle.querySelector('i').classList.toggle('bx-sun');
+            localStorage.setItem('theme', newTheme);
+        });
+        // Load theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.body.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'dark') {
+                themeToggle.querySelector('i').classList.replace('bx-moon', 'bx-sun');
+            }
+        }
+
+        // --- Fullscreen Toggle ---
+        document.getElementById('fullscreen-toggle').onclick = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        };
+
+        // --- Settings Form Submission with Auto-Save ---
+        function saveSettingsForm(data) {
+            localStorage.setItem('settingsForm', JSON.stringify(data));
+        }
+        function loadSettingsForm() {
+            const data = JSON.parse(localStorage.getItem('settingsForm'));
+            if (!data) return;
+            for (const [key, value] of Object.entries(data)) {
+                const el = document.querySelector(`[name="${key}"]`);
+                if (!el) continue;
+                if (el.type === "checkbox") el.checked = value;
+                else el.value = value;
+            }
+        }
+        document.querySelector('#settings-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            // Save to localStorage
+            saveSettingsForm({
+                notifications: !!data.notifications,
+                'dark-theme': !!data['dark-theme'],
+                language: data.language,
+                'study-mode': data['study-mode'],
+                'enable-simulations': !!data['enable-simulations'],
+                'auto-save': !!data['auto-save']
+            });
+            // Add log
+            const changes = [];
+            if (data.notifications) changes.push('Notifications enabled');
+            if (data['dark-theme']) changes.push('Dark theme enabled');
+            if (data.language) changes.push(`Language set to ${data.language}`);
+            if (data['study-mode']) changes.push(`Study mode: ${data['study-mode']}`);
+            if (data['enable-simulations']) changes.push('Simulations enabled');
+            if (data['auto-save']) changes.push('Auto-save enabled');
+            const now = new Date();
+            const date = now.toLocaleDateString('en-CA');
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            logs.unshift([date, time, "Settings updated", changes.join(', ')]);
+            saveLogs();
+            renderLogs();
+            // Show status
+            const status = document.getElementById('settings-status');
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 1500);
+        });
+        // Auto-save on change if enabled
+        document.querySelector('#settings-form').addEventListener('change', (e) => {
+            const autoSave = document.querySelector('[name="auto-save"]').checked;
+            if (autoSave) {
+                const formData = new FormData(document.querySelector('#settings-form'));
+                const data = Object.fromEntries(formData);
+                saveSettingsForm({
+                    notifications: !!data.notifications,
+                    'dark-theme': !!data['dark-theme'],
+                    language: data.language,
+                    'study-mode': data['study-mode'],
+                    'enable-simulations': !!data['enable-simulations'],
+                    'auto-save': !!data['auto-save']
+                });
+            }
+        });
+        loadSettingsForm();
+
+        // --- Keyboard shortcut (Ctrl + K) for search ---
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                settingsSearch.focus();
+            }
+        });
+
+        // --- Load profile data for header ---
+        const defaultProfile = { name: "Admin" };
+        function loadHeaderName() {
+            const profileData = JSON.parse(localStorage.getItem('profileData')) || defaultProfile;
+            document.querySelector('#header-name').textContent = `Welcome, ${profileData.name}`;
+        }
+        document.addEventListener('DOMContentLoaded', loadHeaderName);
+
+        // --- Accessibility: Close modals on Escape ---
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") {
+                document.querySelectorAll('.fixed.z-50').forEach(modal => modal.classList.add('hidden'));
+            }
+        });
+
+        // --- Lazy loading for settings table rows (fade-in effect) ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+        function observeRows() {
+            document.querySelectorAll('#settings-table tr').forEach(row => {
+                observer.observe(row);
+            });
+        }
+        observeRows();
+        // Re-observe after logs update
+        const origRenderLogs = renderLogs;
+        renderLogs = function() {
+            origRenderLogs();
+            observeRows();
+        };
+
+        // --- Tooltips for icons ---
+        document.querySelectorAll('button[aria-label], a[aria-label]').forEach(el => {
+            el.addEventListener('focus', function() {
+                el.title = el.getAttribute('aria-label');
+            });
+        });
+        </script>
+    </main>
+
+    <script src="https://unpkg.com/boxicons@2.1.3/dist/boxicons.js"></script>
+</body>
+
+</html>

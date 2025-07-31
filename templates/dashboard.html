@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Dashboard with metrics, charts, and activity log">
+    <meta name="keywords" content="dashboard, admin, charts, responsive, boxicons">
+    <meta name="author" content="Admin Dashboard">
+    <title>Dashboard - Admin Dashboard</title>
+    <!-- Boxicons CSS CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* UNIFIED DASHBOARD STYLE */
+        /* Place this in the <style> section of each dashboard file */
+        @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #6b7280;
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --sidebar-bg: #1f2937;
+            --sidebar-text: #ffffff;
+            --content-radius: 1.5rem;
+            --card-radius: 1.25rem;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1f2937;
+            --text-color: #ffffff;
+            --sidebar-bg: #111827;
+            --sidebar-text: #d1d5db;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: "Poppins", sans-serif;
+            font-weight: 600;
+            font-style: normal;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            transition: transform 0.3s ease, box-shadow 0.3s;
+            border-top-right-radius: 1.25rem;
+            border-bottom-right-radius: 1.25rem;
+            box-shadow: 2px 0 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--secondary-color);
+            border-top-right-radius: 1.25rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: background 0.3s, color 0.3s, transform 0.2s;
+            border-radius: 0.75rem;
+            margin: 0.25rem 1rem;
+            font-weight: 500;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.bg-gray-700 {
+            background: linear-gradient(90deg, var(--primary-color) 60%, var(--secondary-color) 100%);
+            color: #fff;
+            transform: scale(1.045);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.10);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease, box-shadow 0.3s, background 0.3s;
+            border-radius: 1.5rem;
+            background: linear-gradient(120deg, #f0f4ff 0%, #f9fafb 100%);
+            min-height: 100vh;
+            box-shadow: 0 4px 24px rgba(59, 130, 246, 0.04);
+        }
+
+        .main-content.full {
+            margin-left: 0;
+        }
+
+        /* Cards */
+        .card,
+        .profile-card {
+            background-color: var(--bg-color);
+            border: 1.5px solid var(--secondary-color);
+            border-radius: var(--card-radius);
+            padding: 1.5rem;
+            transition: transform 0.35s cubic-bezier(.4, 2, .6, 1), box-shadow 0.3s, border-color 0.3s, background 0.3s;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.04);
+            will-change: transform, box-shadow;
+            max-width: 100%;
+        }
+
+        .card:hover,
+        .card:focus,
+        .profile-card:hover,
+        .profile-card:focus {
+            transform: scale(1.045) translateY(-6px);
+            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.18);
+            border-color: var(--primary-color);
+            background: linear-gradient(120deg, #e0eaff 0%, #f3f6fd 100%);
+            z-index: 2;
+        }
+
+        .card:first-child:hover,
+        .card:first-child:focus {
+            transform: scale(1.06) translateY(-10px);
+        }
+
+        .card i,
+        .profile-card i {
+            transition: transform 0.3s, color 0.3s;
+        }
+
+        .card:hover i,
+        .card:focus i,
+        .profile-card:hover i,
+        .profile-card:focus i {
+            transform: scale(1.18) rotate(-8deg);
+            color: var(--primary-color);
+        }
+
+        /* Tables */
+        .activity-table,
+        .metrics-table,
+        .users-table,
+        .settings-table,
+        .login-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background-color: var(--bg-color);
+            transition: background-color 0.3s;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.04);
+        }
+
+        .activity-table th,
+        .activity-table td,
+        .metrics-table th,
+        .metrics-table td,
+        .users-table th,
+        .users-table td,
+        .settings-table th,
+        .settings-table td,
+        .login-table th,
+        .login-table td {
+            padding: 1rem;
+            border: 1px solid var(--secondary-color);
+            text-align: left;
+            transition: background-color 0.3s, color 0.3s, transform 0.2s;
+            border-radius: 0.5rem;
+        }
+
+        .activity-table th,
+        .metrics-table th,
+        .users-table th,
+        .settings-table th,
+        .login-table th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .activity-table tbody tr,
+        .metrics-table tr,
+        .users-table tr,
+        .settings-table tr,
+        .login-table tr {
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            border-radius: 0.5rem;
+        }
+
+        .activity-table tbody tr:hover,
+        .activity-table tbody tr:focus,
+        .metrics-table tr:hover,
+        .users-table tr:hover,
+        .settings-table tr:hover,
+        .login-table tr:hover {
+            background-color: rgba(59, 130, 246, 0.12);
+            transform: scale(1.01) translateX(6px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.12);
+            z-index: 1;
+        }
+
+        /* Search Bar & Inputs */
+        .search-bar input,
+        .filter-select,
+        select,
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--secondary-color);
+            border-radius: 0.75rem;
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+            background: #f3f6fd;
+        }
+
+        .search-bar input:focus,
+        .filter-select:focus,
+        select:focus,
+        input:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            outline: none;
+            background: #e8f0fe;
+        }
+
+        /* Buttons */
+        button,
+        [type="submit"] {
+            transition: background-color 0.3s, color 0.3s, transform 0.2s;
+            border-radius: 0.5rem;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        button:hover,
+        [type="submit"]:hover {
+            background-color: var(--primary-color);
+            color: #fff;
+            transform: scale(1.08);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.18);
+        }
+
+        /* Sidebar/Menu/Theme Toggle Buttons */
+        #toggle-sidebar,
+        #theme-toggle {
+            transition: background-color 0.3s, color 0.3s, transform 0.2s;
+            border-radius: 50%;
+            border: none;
+            outline: none;
+        }
+
+        #toggle-sidebar:hover,
+        #toggle-sidebar:focus,
+        #theme-toggle:hover,
+        #theme-toggle:focus {
+            background-color: var(--primary-color);
+            color: #fff;
+            transform: scale(1.12);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.18);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                border-radius: 1rem;
+            }
+
+            .main-content.full {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .card,
+            .profile-card {
+                padding: 1rem;
+                border-radius: 0.75rem;
+            }
+
+            .activity-table th,
+            .activity-table td,
+            .metrics-table th,
+            .metrics-table td,
+            .users-table th,
+            .users-table td,
+            .settings-table th,
+            .settings-table td,
+            .login-table th,
+            .login-table td {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+                border-radius: 0.4rem;
+            }
+
+            .main-content {
+                padding: 0.5rem;
+                border-radius: 0.75rem;
+            }
+        }
+
+        /* Utility */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .bx-spin {
+            animation: spin 2s linear infinite;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2 class="text-xl font-bold">Admin Dashboard</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="bg-gray-700"><i class="bx bx-home-alt mr-2"></i> Dashboard</a>
+            <a href="/analytics"><i class="bx bx-bar-chart-alt-2 mr-2"></i> Analytics</a>
+            <a href="/users"><i class="bx bx-user mr-2"></i> Users</a>
+            <a href="/profile"><i class="bx bx-id-card mr-2"></i> Profile</a>
+            <a href="/settings"><i class="bx bx-cog mr-2"></i> Settings</a>
+            <a href="/logout"><i class="bx bx-log-out mr-2"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-6">
+            <div class="flex items-center">
+                <button id="toggle-sidebar" class="text-2xl mr-4" aria-label="Toggle sidebar">
+                    <i class="bx bx-menu"></i>
+                </button>
+                <h1 class="text-2xl font-bold">Dashboard</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700" aria-label="Toggle theme">
+                    <i class="bx bx-moon"></i>
+                </button>
+                <button id="fullscreen-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700"
+                    aria-label="Toggle fullscreen">
+                    <i class="bx bx-fullscreen"></i>
+                </button>
+                <span id="header-name">Welcome, Admin</span>
+            </div>
+        </header>
+
+        <!-- Dashboard Cards -->
+        <section class="flex flex-wrap gap-6 mb-8">
+            <div class="card flex-1 min-w-[220px] flex flex-col items-center justify-center" tabindex="0">
+                <h3 class="text-lg font-semibold mb-1">Robots Deployed</h3>
+                <p class="text-3xl font-bold mb-2">27</p>
+                <i class="bx bx-bot text-4xl text-blue-500"></i>
+            </div>
+            <div class="card flex-1 min-w-[220px] flex flex-col items-center justify-center" tabindex="0">
+                <h3 class="text-lg font-semibold mb-1">Automation Projects</h3>
+                <p class="text-3xl font-bold mb-2">12</p>
+                <i class="bx bx-cog text-4xl text-green-500"></i>
+            </div>
+            <div class="card flex-1 min-w-[220px] flex flex-col items-center justify-center" tabindex="0">
+                <h3 class="text-lg font-semibold mb-1">Sensors Integrated</h3>
+                <p class="text-3xl font-bold mb-2">85</p>
+                <i class="bx bx-chip text-4xl text-yellow-500"></i>
+            </div>
+            <div class="card flex-1 min-w-[220px] flex flex-col items-center justify-center" tabindex="0">
+                <h3 class="text-lg font-semibold mb-1">Lab Hours</h3>
+                <p class="text-3xl font-bold mb-2">142</p>
+                <i class="bx bx-time-five text-4xl text-purple-500"></i>
+            </div>
+        </section>
+
+        <!-- Editable Semester Marks Row -->
+        <section class="flex flex-col gap-8 mb-8">
+            <div class="flex flex-wrap gap-6">
+                <!-- Graph Type Selector -->
+                <div class="w-full flex justify-end mb-2">
+                    <div class="relative in</div>line-block">
+                        <select id="graph-type" class="appearance-none bg-blue-100 border border-blue-400 text-blue-700 py-2 px-4 pr-8 rounded-lg shadow leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 transition" aria-label="Select graph type">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph</option>
+                            <option value="pie">Pie Chart</option>
+                            <option value="doughnut">Doughnut Chart</option>
+                        </select>
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="bx bx-chevron-down text-blue-500 text-xl"></i>
+                        </span>
+                    </div>
+                    <!-- Grade/Marks Switch -->
+                    <div class="ml-4 flex items-center">
+                        <label for="grade-marks-toggle" class="mr-2 font-medium text-blue-700">Show:</label>
+                        <select id="grade-marks-toggle" class="appearance-none bg-blue-100 border border-blue-400 text-blue-700 py-2 px-4 pr-8 rounded-lg shadow leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 transition" aria-label="Select data type">
+                            <option value="marks">Marks</option>
+                            <option value="grades">Grades</option>
+                        </select>
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"></span>
+                    </div>
+                </div>
+                <!-- Semester Cards (1-8) -->
+                <template id="semester-card-template">
+                    <div class="card flex-1 min-w-[260px] max-w-xs flex flex-col items-center semester-card glass-semester-card" tabindex="0" style="background: rgba(255,255,255,0.18); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18); backdrop-filter: blur(8px); border: 1.5px solid rgba(59,130,246,0.18);">
+                        <h2 class="text-xl font-semibold mb-2 text-blue-600 semester-title"></h2>
+                        <canvas class="marks-chart" height="160"></canvas>
+                        <div class="flex items-center gap-2 mt-3 w-full">
+                            <button class="edit-btn bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition">Edit</button>
+                        </div>
+                    </div>
+                </template>
+                <div id="semester-cards-row" class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full"></div>
+            <script>
+                // --- Fullscreen Toggle ---
+                            document.getElementById('fullscreen-toggle').onclick = function () {
+                                if (!document.fullscreenElement) {
+                                    document.documentElement.requestFullscreen();
+                                } else {
+                                    document.exitFullscreen();
+                                }
+                            };
+            // Patch: Make semester line graphs match the "Robot Deployments Over Time" style
+            const origRenderCharts = renderCharts;
+            renderCharts = function() {
+                const marks = getSemesterMarks();
+                marks.forEach((sem, idx) => {
+                    const canvas = document.getElementById(`marks-chart-${idx + 1}`);
+                    if (!canvas) return;
+                    const ctx = canvas.getContext('2d');
+                    if (semesterCharts[idx]) semesterCharts[idx].destroy();
+                    let chartType = currentGraphType;
+                    let chartData, chartOptions;
+                    let colorArr = Array.isArray(sem.color) ? sem.color : getColorPalette(sem.labels.length);
+
+                    // Data/labels for marks or grades
+                    let labels = sem.labels;
+                    let data, displayLabels;
+                    if (currentDataType === 'grades') {
+                        displayLabels = marksArrToGrades(sem.data);
+                        data = sem.data.map(marksToGrade).map(gradeToValue);
+                    } else {
+                        displayLabels = sem.labels;
+                        data = sem.data;
+                    }
+
+                    // --- MODIFIED: Dynamic y-axis for grades ---
+                    let yTicks = {};
+                    if (currentDataType === 'grades') {
+                        const grades = Array.from(new Set(sem.data.map(marksToGrade)));
+                        const gradeValuePairs = grades.map(g => ({
+                            grade: g,
+                            value: gradeToValue(g)
+                        })).sort((a, b) => b.value - a.value);
+                        yTicks = {
+                            callback: function(value) {
+                                const found = gradeValuePairs.find(gv => gv.value === value);
+                                return found ? found.grade : '';
+                            },
+                            stepSize: 5
+                        };
+                    }
+
+                    if (chartType === 'pie' || chartType === 'doughnut') {
+                        chartData = {
+                            labels: labels,
+                            datasets: [{
+                                data: data,
+                                backgroundColor: colorArr,
+                                borderColor: '#fff',
+                                borderWidth: 2
+                            }]
+                        };
+                        chartOptions = {
+                            responsive: true,
+                            plugins: {
+                                legend: { display: true, position: 'bottom' },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            if (currentDataType === 'grades') {
+                                                return `${context.label}: ${marksToGrade(sem.data[context.dataIndex])}`;
+                                            } else {
+                                                return `${context.label}: ${context.parsed}`;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        };
+                    } else if (chartType === 'line') {
+                        // Match the "Robot Deployments Over Time" style
+                        chartData = {
+                            labels: labels,
+                            datasets: [{
+                                label: currentDataType === 'grades' ? 'Grade Value' : 'Marks',
+                                data: data,
+                                borderColor: 'rgba(59, 130, 246, 1)',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                fill: true,
+                                tension: 0.4,
+                                borderWidth: 2,
+                                pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                                pointBorderColor: '#fff'
+                            }]
+                        };
+                        chartOptions = {
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            if (currentDataType === 'grades') {
+                                                return `Grade: ${marksToGrade(sem.data[context.dataIndex])} (${context.parsed.y !== undefined ? context.parsed.y : context.parsed})`;
+                                            } else {
+                                                return `Marks: ${context.parsed.y !== undefined ? context.parsed.y : context.parsed}`;
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    title: { display: true, text: currentDataType === 'grades' ? 'Grade Value' : 'Marks' },
+                                    ticks: yTicks
+                                }
+                            }
+                        };
+                    } else {
+                        chartData = {
+                            labels: labels,
+                            datasets: [{
+                                label: currentDataType === 'grades' ? 'Grade Value' : 'Marks',
+                                data: data,
+                                backgroundColor: colorArr,
+                                borderColor: colorArr,
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0
+                            }]
+                        };
+                        chartOptions = {
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            if (currentDataType === 'grades') {
+                                                return `Grade: ${marksToGrade(sem.data[context.dataIndex])} (${context.parsed.y !== undefined ? context.parsed.y : context.parsed})`;
+                                            } else {
+                                                return `Marks: ${context.parsed.y !== undefined ? context.parsed.y : context.parsed}`;
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    title: { display: true, text: currentDataType === 'grades' ? 'Grade Value' : 'Marks' },
+                                    ticks: yTicks
+                                }
+                            }
+                        };
+                    }
+                    semesterCharts[idx] = new Chart(ctx, {
+                        type: chartType,
+                        data: chartData,
+                        options: chartOptions
+                    });
+                });
+            };
+            </script>
+        </section>
+
+        <!-- Modal for Editing Chart -->
+        <div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg p-6 w-full max-w-lg">
+                <h3 class="text-lg font-bold mb-4">Edit Semester Marks</h3>
+                <form id="edit-form" class="space-y-3">
+                    <div id="subjects-container"></div>
+                    <div class="flex justify-between mt-2">
+                        <button type="button" id="add-subject" class="bg-green-500 text-white px-2 py-1 rounded">Add Subject</button>
+                        <button type="button" id="remove-subject" class="bg-red-500 text-white px-2 py-1 rounded">Remove Subject</button>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-4">
+                        <button type="button" class="bg-gray-300 px-3 py-1 rounded" id="cancel-modal">Cancel</button>
+                        <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Average Marks Overview (Premium Line Graph) -->
+        <section class="card mb-8" style="margin-bottom: 30px; margin-top: 30px; background:   linear-gradient(120deg, #ffffff 0%, #ffffff 100%); box-shadow: 0 8px 32px 0 rgba(3, 7, 57, 0.726); border: 1.5px solid rgba(59,130,246,0.18);">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2" id="avg-marks-title">
+            <i class="bx bx-trending-up text-blue-500 text-2xl"></i>
+            Average Marks Overview
+            </h2>
+            <div class="relative w-full">
+            <canvas id="avg-marks-chart" height="140"></canvas>
+            <!-- Decorative gradient overlay for premium look -->
+            <div style="pointer-events:none;position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,rgba(59,130,246,0.08) 0%,rgba(16,185,129,0.06) 100%);border-radius:1.25rem;z-index:1;"></div>
+            </div>
+        </section>
+
+        <!-- Semester Marks Review Table -->
+        <section class="card mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i class="bx bx-table text-blue-500 text-2xl"></i>
+                Semester Marks Review
+                <!-- Export Button -->
+                <button id="export-csv" class="ml-auto bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition flex items-center gap-1" title="Export as CSV">
+                    <i class="bx bx-download"></i> Export CSV
+                </button>
+            </h2>
+            <div class="flex flex-wrap items-center mb-4 gap-2">
+                <label for="semester-switch" class="font-medium text-blue-700">Select Semester:</label>
+                <select id="semester-switch" class="appearance-none bg-blue-100 border border-blue-400 text-blue-700 py-2 px-4 pr-8 rounded-lg shadow leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 transition">
+                    <option value="all">All Semesters</option>
+                    <option value="0">Semester 1</option>
+                    <option value="1">Semester 2</option>
+                    <option value="2">Semester 3</option>
+                    <option value="3">Semester 4</option>
+                    <option value="4">Semester 5</option>
+                    <option value="5">Semester 6</option>
+                    <option value="6">Semester 7</option>
+                    <option value="7">Semester 8</option>
+                </select>
+                <!-- Search Bar -->
+                <div class="ml-4 flex items-center gap-2">
+                    <input type="text" id="review-search" placeholder="Search subject..." class="border border-blue-300 rounded px-3 py-1 focus:ring-2 focus:ring-blue-400 transition" />
+                    <button id="clear-review-search" class="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300 transition" title="Clear search">
+                        <i class="bx bx-x"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="activity-table w-full" id="semesters-review-table">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3">Semester</th>
+                            <th class="px-4 py-3">Subject</th>
+                            <th class="px-4 py-3">Marks</th>
+                            <th class="px-4 py-3">Grade</th>
+                            <th class="px-4 py-3">Highest</th>
+                            <th class="px-4 py-3">Lowest</th>
+                            <th class="px-4 py-3">Average</th>
+                        </tr>
+                    </thead>
+                    <tbody id="semesters-review-tbody">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Search filter for review table
+            const searchInput = document.getElementById('review-search');
+            const clearBtn = document.getElementById('clear-review-search');
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                document.querySelectorAll('#semesters-review-tbody tr').forEach(row => {
+                    const subjectCell = row.children[1];
+                    if (!subjectCell) return;
+                    const subject = subjectCell.textContent.toLowerCase();
+                    row.style.display = subject.includes(query) ? '' : 'none';
+                });
+            });
+            clearBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                searchInput.dispatchEvent(new Event('input'));
+            });
+
+            // Export CSV
+            document.getElementById('export-csv').addEventListener('click', function() {
+                const rows = Array.from(document.querySelectorAll('#semesters-review-table tr'));
+                const csv = rows.map(row =>
+                    Array.from(row.children).map(cell => `"${cell.textContent.replace(/"/g, '""')}"`).join(',')
+                ).join('\n');
+                const blob = new Blob([csv], {type: 'text/csv'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'semester_marks_review.csv';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        });
+        </script>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const semesterTitles = [
+                "Semester 1", "Semester 2", "Semester 3", "Semester 4",
+                "Semester 5", "Semester 6", "Semester 7", "Semester 8"
+            ];
+            function renderSemesterReviewTable(selected = "all") {
+                const marks = getSemesterMarks();
+                const tbody = document.getElementById('semesters-review-tbody');
+                tbody.innerHTML = '';
+                let semestersToShow = [];
+                if (selected === "all") {
+                    semestersToShow = marks.map((sem, idx) => ({...sem, idx}));
+                } else {
+                    const idx = parseInt(selected, 10);
+                    if (!isNaN(idx) && marks[idx]) {
+                        semestersToShow = [{...marks[idx], idx}];
+                    }
+                }
+                semestersToShow.forEach((sem, semIdx) => {
+                    const highest = Math.max(...sem.data);
+                    const lowest = Math.min(...sem.data);
+                    const avg = (sem.data.reduce((a, b) => a + b, 0) / sem.data.length).toFixed(2);
+                    sem.labels.forEach((subject, subjIdx) => {
+                        const mark = sem.data[subjIdx];
+                        const grade = marksToGrade(mark);
+                        const tr = document.createElement('tr');
+                        if (subjIdx === 0) {
+                            tr.innerHTML = `
+                                <td rowspan="${sem.labels.length}" class="font-bold">${semesterTitles[sem.idx]}</td>
+                                <td>${subject}</td>
+                                <td>${mark}</td>
+                                <td>${grade}</td>
+                                <td rowspan="${sem.labels.length}">${highest}</td>
+                                <td rowspan="${sem.labels.length}">${lowest}</td>
+                                <td rowspan="${sem.labels.length}">${avg}</td>
+                            `;
+                        } else {
+                            tr.innerHTML = `
+                                <td>${subject}</td>
+                                <td>${mark}</td>
+                                <td>${grade}</td>
+                            `;
+                        }
+                        tbody.appendChild(tr);
+                    });
+                });
+            }
+            document.getElementById('semester-switch').addEventListener('change', function() {
+                renderSemesterReviewTable(this.value);
+            });
+            renderSemesterReviewTable("all");
+        });
+        </script>
+    </main>
+
+    <!-- Boxicons Custom Element JS CDN -->
+    <script src="https://unpkg.com/boxicons@2.1.3/dist/boxicons.js"></script>
+    <script>
+        // Utility: Generate a color palette
+        function getColorPalette(n) {
+            const palette = [
+                '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444',
+                '#22c55e', '#6366f1', '#eab308', '#f472b6', '#0ea5e9',
+                '#f43f5e', '#14b8a6', '#a3e635', '#f97316', '#7c3aed'
+            ];
+            let colors = [];
+            for (let i = 0; i < n; i++) {
+                colors.push(palette[i % palette.length]);
+            }
+            return colors;
+        }
+
+        // Grade conversion utility
+        function marksToGrade(marks) {
+            if (marks >= 90) return "A+";
+            if (marks >= 80) return "A";
+            if (marks >= 70) return "B";
+            if (marks >= 60) return "C";
+            if (marks >= 50) return "D";
+            return "F";
+        }
+        function marksArrToGrades(arr) {
+            return arr.map(marksToGrade);
+        }
+        // For charting, assign a numeric value to grades for plotting
+        function gradeToValue(grade) {
+            switch (grade) {
+                case "A+": return 95;
+                case "A": return 85;
+                case "B": return 75;
+                case "C": return 65;
+                case "D": return 55;
+                case "F": return 40;
+                default: return 0;
+            }
+        }
+
+        // Default data with per-course color arrays
+        const defaultSemesterMarks = [
+            { labels: ['Maths', 'Physics', 'Chemistry', 'English', 'CS'], data: [85, 78, 92, 88, 80], color: getColorPalette(5) },
+            { labels: ['Maths II', 'Electronics', 'Mechanics', 'Env. Science', 'CS II'], data: [82, 75, 89, 90, 84], color: getColorPalette(5) },
+            { labels: ['Maths III', 'Microprocessor', 'Signals', 'Digital Logic', 'Robotics'], data: [88, 80, 85, 87, 90], color: getColorPalette(5) },
+            { labels: ['Control Sys', 'AI Basics', 'Sensors', 'Networks', 'Statistics'], data: [90, 86, 88, 84, 83], color: getColorPalette(5) },
+            { labels: ['Machine Learning', 'Embedded', 'Power Elec', 'Mechatronics', 'Project'], data: [91, 89, 85, 88, 92], color: getColorPalette(5) },
+            { labels: ['Robotics II', 'IoT', 'Automation', 'DSP', 'Elective'], data: [87, 90, 86, 88, 85], color: getColorPalette(5) },
+            { labels: ['Project Mgmt', 'Vision', 'Mobile Robots', 'Elective II', 'Seminar'], data: [92, 88, 90, 86, 91], color: getColorPalette(5) },
+            { labels: ['Thesis', 'Internship', 'Viva', 'Elective III', 'Open Elective'], data: [95, 93, 94, 90, 92], color: getColorPalette(5) }
+        ];
+        function getSemesterMarks() {
+            let data = JSON.parse(localStorage.getItem('semesterMarks'));
+            if (!data) return defaultSemesterMarks;
+            data.forEach((sem, idx) => {
+                if (!Array.isArray(sem.color)) {
+                    sem.color = getColorPalette(sem.labels.length);
+                }
+            });
+            return data;
+        }
+        function setSemesterMarks(data) {
+            localStorage.setItem('semesterMarks', JSON.stringify(data));
+        }
+
+        // Render semester cards row
+        const semesterTitles = [
+            "Semester 1", "Semester 2", "Semester 3", "Semester 4",
+            "Semester 5", "Semester 6", "Semester 7", "Semester 8"
+        ];
+        const semesterCharts = [];
+        let currentGraphType = localStorage.getItem('graphType') || 'bar';
+        let currentDataType = localStorage.getItem('dataType') || 'marks'; // 'marks' or 'grades'
+
+        function renderSemesterCards() {
+            const marks = getSemesterMarks();
+            const row = document.getElementById('semester-cards-row');
+            row.innerHTML = '';
+            marks.forEach((sem, idx) => {
+                const tpl = document.getElementById('semester-card-template').content.cloneNode(true);
+                tpl.querySelector('.semester-title').textContent = semesterTitles[idx];
+                const canvas = tpl.querySelector('.marks-chart');
+                canvas.id = `marks-chart-${idx + 1}`;
+                tpl.querySelector('.edit-btn').addEventListener('click', () => editChart(idx));
+                row.appendChild(tpl);
+            });
+            renderCharts();
+            renderAvgMarksChart();
+        }
+
+        // Render all charts
+        function renderCharts() {
+            const marks = getSemesterMarks();
+            marks.forEach((sem, idx) => {
+                const canvas = document.getElementById(`marks-chart-${idx + 1}`);
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                if (semesterCharts[idx]) semesterCharts[idx].destroy();
+                let chartType = currentGraphType;
+                let chartData, chartOptions;
+                let colorArr = Array.isArray(sem.color) ? sem.color : getColorPalette(sem.labels.length);
+
+                // Data/labels for marks or grades
+                let labels = sem.labels;
+                let data, displayLabels;
+                if (currentDataType === 'grades') {
+                    displayLabels = marksArrToGrades(sem.data);
+                    data = sem.data.map(marksToGrade).map(gradeToValue);
+                } else {
+                    displayLabels = sem.labels;
+                    data = sem.data;
+                }
+
+                // --- MODIFIED: Dynamic y-axis for grades ---
+                let yTicks = {};
+                if (currentDataType === 'grades') {
+                    // Get unique grades for this semester
+                    const grades = Array.from(new Set(sem.data.map(marksToGrade)));
+                    // Map grades to values and sort descending
+                    const gradeValuePairs = grades.map(g => ({
+                        grade: g,
+                        value: gradeToValue(g)
+                    })).sort((a, b) => b.value - a.value);
+                    // For y-axis, show only the grades present in the data
+                    yTicks = {
+                        callback: function(value) {
+                            const found = gradeValuePairs.find(gv => gv.value === value);
+                            return found ? found.grade : '';
+                        },
+                        stepSize: 5 // To show only relevant ticks
+                    };
+                }
+
+                if (chartType === 'pie' || chartType === 'doughnut') {
+                    chartData = {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colorArr,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    };
+                    chartOptions = {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: true, position: 'bottom' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        if (currentDataType === 'grades') {
+                                            return `${context.label}: ${marksToGrade(sem.data[context.dataIndex])}`;
+                                        } else {
+                                            return `${context.label}: ${context.parsed}`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    };
+                } else {
+                    chartData = {
+                        labels: labels,
+                        datasets: [{
+                            label: currentDataType === 'grades' ? 'Grade Value' : 'Marks',
+                            data: data,
+                            backgroundColor: colorArr,
+                            borderColor: colorArr,
+                            borderWidth: 2,
+                            fill: chartType === 'line' ? true : false,
+                            tension: chartType === 'line' ? 0.4 : 0
+                        }]
+                    };
+                    chartOptions = {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        if (currentDataType === 'grades') {
+                                            return `Grade: ${marksToGrade(sem.data[context.dataIndex])} (${context.parsed.y !== undefined ? context.parsed.y : context.parsed})`;
+                                        } else {
+                                            return `Marks: ${context.parsed.y !== undefined ? context.parsed.y : context.parsed}`;
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: { display: true, text: currentDataType === 'grades' ? 'Grade Value' : 'Marks' },
+                                ticks: yTicks
+                            }
+                        }
+                    };
+                }
+                semesterCharts[idx] = new Chart(ctx, {
+                    type: chartType,
+                    data: chartData,
+                    options: chartOptions
+                });
+            });
+        }
+
+        // Modal logic
+        let editingIdx = null;
+        function editChart(idx) {
+            editingIdx = idx;
+            const marks = getSemesterMarks()[idx];
+            renderSubjectsInputs(marks.labels, marks.data);
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+        function closeModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+            editingIdx = null;
+        }
+
+        // Render subject/marks input fields
+        function renderSubjectsInputs(labels = [], data = []) {
+            const container = document.getElementById('subjects-container');
+            container.innerHTML = '';
+            for (let i = 0; i < labels.length; i++) {
+                container.appendChild(createSubjectRow(labels[i], data[i]));
+            }
+            if (labels.length === 0) {
+                container.appendChild(createSubjectRow('', ''));
+            }
+        }
+        function createSubjectRow(label = '', mark = '') {
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 mb-2 items-center';
+            div.innerHTML = `
+                <input type="text" class="subject-name border rounded px-2 py-1 flex-1" placeholder="Subject Name" value="${label}">
+                <input type="number" class="subject-mark border rounded px-2 py-1 w-24" placeholder="Marks" min="0" max="100" value="${mark}">
+            `;
+            return div;
+        }
+
+        // Add/remove subject rows
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('add-subject').addEventListener('click', function() {
+                document.getElementById('subjects-container').appendChild(createSubjectRow('', ''));
+            });
+            document.getElementById('remove-subject').addEventListener('click', function() {
+                const container = document.getElementById('subjects-container');
+                if (container.children.length > 1) {
+                    container.removeChild(container.lastElementChild);
+                }
+            });
+            document.getElementById('cancel-modal').addEventListener('click', closeModal);
+        });
+
+        // Save form
+        document.getElementById('edit-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (editingIdx === null) return;
+            const container = document.getElementById('subjects-container');
+            const labels = [];
+            const data = [];
+            let valid = true;
+            container.querySelectorAll('.subject-name').forEach((input, i) => {
+                const name = input.value.trim();
+                const markInput = container.querySelectorAll('.subject-mark')[i];
+                const mark = Number(markInput.value);
+                if (!name || isNaN(mark)) valid = false;
+                labels.push(name);
+                data.push(mark);
+            });
+            if (!valid) {
+                alert('Please fill all subject names and marks correctly.');
+                return;
+            }
+            const marks = getSemesterMarks();
+            marks[editingIdx] = { labels, data, color: getColorPalette(labels.length) };
+            setSemesterMarks(marks);
+            renderSemesterCards();
+            closeModal();
+        });
+
+        // Graph type selector logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const graphTypeSelect = document.getElementById('graph-type');
+            graphTypeSelect.value = currentGraphType;
+            graphTypeSelect.addEventListener('change', function() {
+                currentGraphType = this.value;
+                localStorage.setItem('graphType', currentGraphType);
+                renderCharts();
+                renderAvgMarksChart(); // Ensure average chart updates on graph type change
+            });
+            // Grade/Marks toggle
+            const gradeMarksToggle = document.getElementById('grade-marks-toggle');
+            gradeMarksToggle.value = currentDataType;
+            gradeMarksToggle.addEventListener('change', function() {
+                currentDataType = this.value;
+                localStorage.setItem('dataType', currentDataType);
+                // Change average chart title
+                document.getElementById('avg-marks-title').textContent = currentDataType === 'grades' ? 'Average Grade Overview' : 'Average Marks Overview';
+                renderCharts();
+                renderAvgMarksChart();
+            });
+            // Set average chart title on load
+            document.getElementById('avg-marks-title').textContent = currentDataType === 'grades' ? 'Average Grade Overview' : 'Average Marks Overview';
+        });
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', renderSemesterCards);
+
+        // Load profile data for header
+        const defaultProfile = {
+            name: "Admin"
+        };
+        function loadHeaderName() {
+            const profileData = JSON.parse(localStorage.getItem('profileData')) || defaultProfile;
+            document.querySelector('#header-name').textContent = `Welcome, ${profileData.name}`;
+        }
+
+        // Sidebar toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleSidebar = document.querySelector('#toggle-sidebar');
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            toggleSidebar.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+                mainContent.classList.toggle('full');
+            });
+        });
+
+        // Theme toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.querySelector('#theme-toggle');
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.body.getAttribute('data-theme');
+                document.body.setAttribute('data-theme', currentTheme === 'light' ? 'dark' : 'light');
+                themeToggle.querySelector('i').classList.toggle('bx-moon');
+                themeToggle.querySelector('i').classList.toggle('bx-sun');
+                localStorage.setItem('theme', document.body.getAttribute('data-theme'));
+            });
+
+            // Load theme from localStorage
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.body.setAttribute('data-theme', savedTheme);
+                if (savedTheme === 'dark') {
+                    themeToggle.querySelector('i').classList.replace('bx-moon', 'bx-sun');
+                }
+            }
+        });
+
+        // Average Marks/Grade Overview Chart
+        let avgMarksChartInstance = null;
+        function renderAvgMarksChart() {
+            const marks = getSemesterMarks();
+            let avgArr, label, yTitle, yTicks;
+            if (currentDataType === 'grades') {
+                avgArr = marks.map(sem => {
+                    if (!sem.data || sem.data.length === 0) return 0;
+                    // Get average grade value
+                    const gradeVals = sem.data.map(marksToGrade).map(gradeToValue);
+                    return (gradeVals.reduce((a, b) => a + b, 0) / gradeVals.length).toFixed(2);
+                });
+                label = 'Average Grade Value';
+                yTitle = 'Average Grade Value';
+                // --- MODIFIED: Show only grades present in data for y-axis ---
+                // Collect all grades present in all semesters
+                const allGrades = Array.from(new Set(marks.flatMap(sem => sem.data.map(marksToGrade))));
+                const gradeValuePairs = allGrades.map(g => ({
+                    grade: g,
+                    value: gradeToValue(g)
+                })).sort((a, b) => b.value - a.value);
+                yTicks = {
+                    callback: function(value) {
+                        const found = gradeValuePairs.find(gv => gv.value === value);
+                        return found ? found.grade : '';
+                    },
+                    stepSize: 5
+                };
+            } else {
+                avgArr = marks.map(sem => {
+                    if (!sem.data || sem.data.length === 0) return 0;
+                    return (sem.data.reduce((a, b) => a + b, 0) / sem.data.length).toFixed(2);
+                });
+                label = 'Average Marks';
+                yTitle = 'Average Marks';
+                yTicks = {};
+            }
+            const ctx = document.getElementById('avg-marks-chart').getContext('2d');
+            if (avgMarksChartInstance) avgMarksChartInstance.destroy();
+            avgMarksChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: semesterTitles,
+                    datasets: [{
+                        label: label,
+                        data: avgArr,
+                        backgroundColor: getColorPalette(8),
+                        borderColor: getColorPalette(8),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: yTitle },
+                            ticks: yTicks
+                        }
+                    }
+                }
+            });
+        }
+
+        // Activity log search
+        document.addEventListener('DOMContentLoaded', function() {
+            const activitySearch = document.querySelector('#activity-search');
+            activitySearch.addEventListener('input', () => {
+                const query = activitySearch.value.toLowerCase();
+                document.querySelectorAll('#activity-table tr').forEach(row => {
+                    const activity = row.dataset.activity ? row.dataset.activity.toLowerCase() : '';
+                    row.style.display = activity.includes(query) ? '' : 'none';
+                });
+            });
+        });
+
+        // Lazy loading for activity log rows (simple fade-in)
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('#activity-table tr').forEach(row => {
+                observer.observe(row);
+            });
+        });
+
+        // Keyboard shortcut (Ctrl + K)
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                const activitySearch = document.querySelector('#activity-search');
+                if (activitySearch) activitySearch.focus();
+            }
+        });
+
+        // Load header name on page load
+        document.addEventListener('DOMContentLoaded', loadHeaderName);
+    </script>
+</body>
+
+</html>

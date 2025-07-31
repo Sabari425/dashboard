@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Analytics Dashboard with charts and metrics">
+    <meta name="keywords" content="analytics, dashboard, charts, responsive, boxicons">
+    <meta name="author" content="Admin Dashboard">
+    <title>Analytics - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #6b7280;
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --sidebar-bg: #1f2937;
+            --sidebar-text: #ffffff;
+            --card-radius: 1.25rem;
+            --content-radius: 1.5rem;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1f2937;
+            --text-color: #ffffff;
+            --sidebar-bg: #111827;
+            --sidebar-text: #d1d5db;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: "Poppins", sans-serif;
+            font-weight: 600;
+            font-style: normal;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            transition: transform 0.3s ease, box-shadow 0.3s;
+            border-top-right-radius: 1.25rem;
+            border-bottom-right-radius: 1.25rem;
+            box-shadow: 2px 0 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--secondary-color);
+            border-top-right-radius: 1.25rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: background 0.3s, color 0.3s, transform 0.2s;
+            border-radius: 0.75rem;
+            margin: 0.25rem 1rem;
+            font-weight: 500;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.bg-gray-700 {
+            background: linear-gradient(90deg, var(--primary-color) 60%, var(--secondary-color) 100%);
+            color: #fff;
+            transform: scale(1.045);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.10);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease, box-shadow 0.3s, background 0.3s;
+            border-radius: 1.5rem;
+            background: linear-gradient(120deg, var(--bg-color) 0%, var(--bg-color) 100%);
+            min-height: 100vh;
+            box-shadow: 0 4px 24px rgba(59, 130, 246, 0.04);
+        }
+
+        .main-content.full {
+            margin-left: 0;
+        }
+
+        .card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--secondary-color);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.06);
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.035);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            border-color: var(--primary-color);
+        }
+
+        .metrics-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background-color: var(--bg-color);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.05);
+        }
+
+        .metrics-table th,
+        .metrics-table td {
+            padding: 1rem;
+            border: 1px solid var(--secondary-color);
+            text-align: left;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .metrics-table tr {
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .metrics-table tr:hover {
+            background: var(--text-color);
+            transform: scale(1.01);
+        }
+
+        .metrics-table th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border-top: none;
+        }
+
+        .filter-select {
+            padding: 0.5rem;
+            border: 1px solid var(--secondary-color);
+            border-radius: 0.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+            outline: none;
+        }
+
+        #theme-toggle {
+            transition: background 0.2s, transform 0.2s;
+            border-radius: 50%;
+        }
+
+        #theme-toggle:hover {
+            background: var(--primary-color);
+            color: #fff;
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        #toggle-sidebar {
+            transition: color 0.2s, transform 0.2s;
+            border-radius: 0.75rem;
+        }
+
+        #toggle-sidebar:hover {
+            color: var(--primary-color);
+            background: rgba(59, 130, 246, 0.08);
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                border-radius: 0 1.25rem 1.25rem 0;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                border-radius: 1.25rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 1rem;
+                border-radius: 1rem;
+            }
+
+            .metrics-table th,
+            .metrics-table td {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .main-content {
+                padding: 0.5rem;
+                border-radius: 0.75rem;
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .bx-spin {
+            animation: spin 2s linear infinite;
+        }
+
+        /* Tables */
+        .activity-table,
+        .metrics-table,
+        .users-table,
+        .settings-table,
+        .login-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background-color: var(--bg-color);
+            transition: background-color 0.3s;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.04);
+        }
+
+        .activity-table th,
+        .activity-table td,
+        .metrics-table th,
+        .metrics-table td,
+        .users-table th,
+        .users-table td,
+        .settings-table th,
+        .settings-table td,
+        .login-table th,
+        .login-table td {
+            padding: 1rem;
+            border: 1px solid var(--secondary-color);
+            text-align: left;
+            transition: background-color 0.3s, color 0.3s, transform 0.2s;
+            border-radius: 0.5rem;
+        }
+
+        .activity-table th,
+        .metrics-table th,
+        .users-table th,
+        .settings-table th,
+        .login-table th {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .activity-table tbody tr,
+        .metrics-table tr,
+        .users-table tr,
+        .settings-table tr,
+        .login-table tr {
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            border-radius: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .activity-table tbody tr:hover,
+        .activity-table tbody tr:focus,
+        .metrics-table tr:hover,
+        .users-table tr:hover,
+        .settings-table tr:hover,
+        .login-table tr:hover {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transform: scale(1.01) translateX(6px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.12);
+            z-index: 1;
+        }
+
+        /* Search Bar & Inputs */
+        .search-bar input,
+        .filter-select,
+        select,
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--secondary-color);
+            border-radius: 0.75rem;
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+            background: var(--bg-color);
+        }
+
+        .search-bar input:focus,
+        .filter-select:focus,
+        select:focus,
+        input:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            outline: none;
+            background: #e8f0fe;
+        }
+
+        /* Buttons */
+        button,
+        [type="submit"] {
+            transition: background-color 0.3s, color 0.3s, transform 0.2s;
+            border-radius: 0.5rem;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        button:hover,
+        [type="submit"]:hover {
+            background-color: var(--primary-color);
+            color: #fff;
+            transform: scale(1.08);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.18);
+        }
+
+        /* Sidebar/Menu/Theme Toggle Buttons */
+        #toggle-sidebar,
+        #theme-toggle {
+            transition: background-color 0.3s, color 0.3s, transform 0.2s;
+            border-radius: 50%;
+            border: none;
+            outline: none;
+        }
+
+        #toggle-sidebar:hover,
+        #toggle-sidebar:focus,
+        #theme-toggle:hover,
+        #theme-toggle:focus {
+            background-color: var(--primary-color);
+            color: #fff;
+            transform: scale(1.12);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.18);
+        }
+
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+
+<body data-theme="light">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2 class="text-xl font-bold">Admin Dashboard</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/dashboard"><i class="bx bx-home-alt mr-2"></i> Dashboard</a>
+            <a href="/analytics" class="bg-gray-700"><i class="bx bx-bar-chart-alt-2 mr-2"></i> Analytics</a>
+            <a href="/users"><i class="bx bx-user mr-2"></i> Users</a>
+            <a href="/profile"><i class="bx bx-id-card mr-2"></i> Profile</a>
+            <a href="/settings"><i class="bx bx-cog mr-2"></i> Settings</a>
+            <a href="/logout"><i class="bx bx-log-out mr-2"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="flex justify-between items-center mb-6">
+            <div class="flex items-center">
+                <button id="toggle-sidebar" class="text-2xl mr-4" aria-label="Toggle sidebar">
+                    <i class="bx bx-menu"></i>
+                </button>
+                <h1 class="text-2xl font-bold">Analytics</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700"
+                    aria-label="Toggle theme">
+                    <i class="bx bx-moon"></i>
+                </button>
+                <span id="header-name">Welcome, Admin</span>
+            </div>
+        </header>
+
+        <section class="mb-6" style="display: none;">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold" style="color: #fff;">Filters</h2>
+                <select id="time-filter" class="filter-select" aria-label="Select time period">
+                    <option value="7days"> </option>
+                    <option value="30days"></option>
+                    <option value="90days">L</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Graph Card Template -->
+            <div class="card shadow-lg border-2 border-blue-100 relative">
+                <button
+                    class="edit-toggle absolute bottom-2 right-2 bg-blue-500 text-white px-3 py-1 rounded flex items-center gap-1"><i
+                        class="bx bx-edit"></i> Edit</button>
+                <form id="user-growth-title-form" class="mb-2 flex flex-col md:flex-row gap-2 edit-section hidden">
+                    <input type="text" id="user-growth-title" value="Robot Deployments Over Time"
+                        class="border rounded px-2 py-1 flex-1 font-bold" />
+                    <input type="text" id="user-growth-subtitle"
+                        value="Track the growth of robot deployments across recent months."
+                        class="border rounded px-2 py-1 flex-1 text-sm" />
+                    <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Update</button>
+                </form>
+                <h2 id="user-growth-title-display" class="text-xl font-bold mb-2 text-blue-700 flex items-center">
+                    <i class="bx bx-line-chart mr-2 text-blue-500"></i>
+                    Robot Deployments Over Time
+                </h2>
+                <p id="user-growth-subtitle-display" class="mb-4 text-sm text-blue-600">Track the growth of robot
+                    deployments across recent months.</p>
+                <canvas id="user-growth-chart" height="200" aria-label="Robot Deployments Over Time"></canvas>
+                <form id="user-growth-form" class="mt-4 flex flex-col md:flex-row gap-2 edit-section hidden">
+                    <input type="text" id="user-growth-label" placeholder="Label"
+                        class="border rounded px-2 py-1 flex-1" />
+                    <input type="number" id="user-growth-value" placeholder="Value"
+                        class="border rounded px-2 py-1 flex-1" />
+                    <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Add</button>
+                </form>
+                <ul id="user-growth-list" class="mt-2 text-sm hidden"></ul>
+            </div>
+            <div class="card shadow-lg border-2 border-green-100 relative">
+                <button
+                    class="edit-toggle absolute bottom-2 right-2 bg-green-500 text-white px-3 py-1 rounded flex items-center gap-1"><i
+                        class="bx bx-edit"></i> Edit</button>
+                <form id="sales-distribution-title-form"
+                    class="mb-2 flex flex-col md:flex-row gap-2 edit-section hidden">
+                    <input type="text" id="sales-distribution-title" value="Sensor Usage Distribution"
+                        class="border rounded px-2 py-1 flex-1 font-bold" />
+                    <input type="text" id="sales-distribution-subtitle"
+                        value="See which sensors are most frequently activated."
+                        class="border rounded px-2 py-1 flex-1 text-sm" />
+                    <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Update</button>
+                </form>
+                <h2 id="sales-distribution-title-display"
+                    class="text-xl font-bold mb-2 text-green-700 flex items-center">
+                    <i class="bx bx-pie-chart-alt mr-2 text-green-500"></i>
+                    Sensor Usage Distribution
+                </h2>
+                <p id="sales-distribution-subtitle-display" class="mb-4 text-sm text-green-600">See which sensors are
+                    most frequently activated.</p>
+                <canvas id="sales-distribution-chart" height="200" aria-label="Sensor Usage Distribution"></canvas>
+                <form id="sales-distribution-form" class="mt-4 flex flex-col md:flex-row gap-2 edit-section hidden">
+                    <input type="text" id="sales-distribution-label" placeholder="Label"
+                        class="border rounded px-2 py-1 flex-1" />
+                    <input type="number" id="sales-distribution-value" placeholder="Value"
+                        class="border rounded px-2 py-1 flex-1" />
+                    <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Add</button>
+                </form>
+                <ul id="sales-distribution-list" class="mt-2 text-sm hidden"></ul>
+            </div>
+            <div class="card md:col-span-2 shadow-lg border-2 border-purple-200 relative">
+                <button
+                    class="edit-toggle absolute bottom-2 right-2 bg-purple-500 text-white px-3 py-1 rounded flex items-center gap-1"><i
+                        class="bx bx-edit"></i> Edit</button>
+                <form id="my-projects-title-form" class="mb-2 flex flex-col md:flex-row gap-2 edit-section hidden">
+                    <input type="text" id="my-projects-title" value="My Project Contributions"
+                        class="border rounded px-2 py-1 flex-1 font-bold" />
+                    <input type="text" id="my-projects-subtitle"
+                        value="Overview of your contributions across different project domains."
+                        class="border rounded px-2 py-1 flex-1 text-sm" />
+                    <button type="submit" class="bg-purple-500 text-white px-3 py-1 rounded">Update</button>
+                </form>
+                <h2 id="my-projects-title-display" class="text-xl font-bold mb-2 text-purple-700 flex items-center">
+                    <i class="bx bx-bar-chart-alt-2 mr-2 text-purple-500"></i>
+                    My Project Contributions
+                </h2>
+                <p id="my-projects-subtitle-display" class="mb-4 text-sm text-purple-600">Overview of your contributions
+                    across different project domains.</p>
+                <canvas id="my-projects-chart" height="120" aria-label="My Project Contributions"></canvas>
+                <form id="my-projects-form" class="mt-4 flex flex-col md:flex-row gap-2 edit-section hidden">
+                    <input type="text" id="my-projects-label" placeholder="Label"
+                        class="border rounded px-2 py-1 flex-1" />
+                    <input type="number" id="my-projects-value" placeholder="Value"
+                        class="border rounded px-2 py-1 flex-1" />
+                    <button type="submit" class="bg-purple-500 text-white px-3 py-1 rounded">Add</button>
+                </form>
+                <ul id="my-projects-list" class="mt-2 text-sm hidden"></ul>
+            </div>
+            <div class="card shadow-lg border-2 border-yellow-200 relative">
+                <button
+                    class="edit-toggle absolute bottom-2 right-2 bg-yellow-500 text-white px-3 py-1 rounded flex items-center gap-1"><i
+                        class="bx bx-edit"></i> Edit</button>
+                <form id="my-activity-title-form" class="mb-2 flex flex-col md:flex-row gap-2 edit-section hidden">
+                    <input type="text" id="my-activity-title" value="My Activity Breakdown"
+                        class="border rounded px-2 py-1 flex-1 font-bold" />
+                    <input type="text" id="my-activity-subtitle"
+                        value="Visualize how your time is spent on various activities this week."
+                        class="border rounded px-2 py-1 flex-1 text-sm" />
+                    <button type="submit" class="bg-yellow-500 text-white px-3 py-1 rounded">Update</button>
+                </form>
+                <h2 id="my-activity-title-display" class="text-xl font-bold mb-2 text-yellow-700 flex items-center">
+                    <i class="bx bx-doughnut-chart mr-2 text-yellow-500"></i>
+                    My Activity Breakdown
+                </h2>
+                <p id="my-activity-subtitle-display" class="mb-4 text-sm text-yellow-600">Visualize how your time is
+                    spent on various activities this week.</p>
+                <canvas id="my-activity-chart" height="180" aria-label="My Activity Breakdown"></canvas>
+                <form id="my-activity-form" class="mt-4 flex flex-col md:flex-row gap-2 edit-section hidden">
+                    <input type="text" id="my-activity-label" placeholder="Label"
+                        class="border rounded px-2 py-1 flex-1" />
+                    <input type="number" id="my-activity-value" placeholder="Value"
+                        class="border rounded px-2 py-1 flex-1" />
+                    <button type="submit" class="bg-yellow-500 text-white px-3 py-1 rounded">Add</button>
+                </form>
+                <ul id="my-activity-list" class="mt-2 text-sm hidden"></ul>
+            </div>
+            <div class="card shadow-lg relative">
+                <button
+                    class="edit-toggle absolute bottom-2 right-2 bg-pink-500 text-white px-3 py-1 rounded flex items-center gap-1"><i
+                        class="bx bx-edit"></i> Edit</button>
+                <form id="my-productivity-title-form" class="mb-2 flex flex-col md:flex-row gap-2 edit-section hidden">
+                    <input type="text" id="my-productivity-title" value="My Weekly Productivity"
+                        class="border rounded px-2 py-1 flex-1 font-bold" />
+                    <input type="text" id="my-productivity-subtitle"
+                        value="Track your daily completed tasks and productivity trends."
+                        class="border rounded px-2 py-1 flex-1 text-sm" />
+                    <button type="submit" class="bg-pink-500 text-white px-3 py-1 rounded">Update</button>
+                </form>
+                <h2 id="my-productivity-title-display" class="text-xl  flex items-center">
+                    <i class="bx bx-trending-up mr-2 text-pink-500"></i>
+                    My Weekly Productivity
+                </h2>
+                <p id="my-productivity-subtitle-display" class="mb-4 text-sm text-pink-600">Track your daily completed
+                    tasks and productivity trends.</p>
+                <canvas id="my-productivity-chart" height="180" aria-label="My Weekly Productivity"></canvas>
+                <form id="my-productivity-form" class="mt-4 flex flex-col md:flex-row gap-2 edit-section hidden">
+                    <input type="text" id="my-productivity-label" placeholder="Label"
+                        class="border rounded px-2 py-1 flex-1" />
+                    <input type="number" id="my-productivity-value" placeholder="Value"
+                        class="border rounded px-2 py-1 flex-1" />
+                    <button type="submit" class="bg-pink-500 text-white px-3 py-1 rounded">Add</button>
+                </form>
+                <ul id="my-productivity-list" class="mt-2 text-sm hidden"></ul>
+            </div>
+        </section>
+
+        <!-- --- Local Storage Persistence for All Editable Data --- -->
+        <script>
+            // Utility: Save chart data to localStorage
+            function saveChartData(chartId, chart) {
+                const data = {
+                    labels: chart.data.labels,
+                    datasets: chart.data.datasets.map(ds => ({
+                        ...ds,
+                        backgroundColor: Array.isArray(ds.backgroundColor) ? ds.backgroundColor : undefined
+                    }))
+                };
+                localStorage.setItem(`chartData-${chartId}`, JSON.stringify(data));
+            }
+            // Utility: Load chart data from localStorage
+            function loadChartData(chartId, chart) {
+                const saved = localStorage.getItem(`chartData-${chartId}`);
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    chart.data.labels = data.labels;
+                    chart.data.datasets.forEach((ds, i) => {
+                        Object.assign(ds, data.datasets[i]);
+                    });
+                    chart.update();
+                }
+            }
+            // Utility: Save title/subtitle to localStorage
+            function saveTitle(chartId, title, subtitle) {
+                localStorage.setItem(`chartTitle-${chartId}`, JSON.stringify({ title, subtitle }));
+            }
+            // Utility: Load title/subtitle from localStorage
+            function loadTitle(chartId, titleDisplayId, subtitleDisplayId) {
+                const saved = localStorage.getItem(`chartTitle-${chartId}`);
+                if (saved) {
+                    const { title, subtitle } = JSON.parse(saved);
+                    const titleDisplay = document.getElementById(titleDisplayId);
+                    const icon = titleDisplay.querySelector('i');
+                    titleDisplay.innerHTML = '';
+                    if (icon) titleDisplay.appendChild(icon);
+                    titleDisplay.appendChild(document.createTextNode(' ' + title));
+                    document.getElementById(subtitleDisplayId).textContent = subtitle;
+                }
+            }
+
+            // --- Patch all chart add/remove to save ---
+            // 1. Robot Deployments Over Time
+            function handleRemoveUserGrowth(e) {
+                if (e.target.closest('.remove-btn')) {
+                    const idx = +e.target.closest('.remove-btn').dataset.idx;
+                    userGrowthChart.data.labels.splice(idx, 1);
+                    userGrowthChart.data.datasets[0].data.splice(idx, 1);
+                    updateList('user-growth', userGrowthChart);
+                    userGrowthChart.update();
+                    saveChartData('user-growth', userGrowthChart);
+                }
+            }
+            document.getElementById('user-growth-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const label = document.getElementById('user-growth-label').value.trim();
+                const value = parseFloat(document.getElementById('user-growth-value').value);
+                if (label && !isNaN(value)) {
+                    userGrowthChart.data.labels.push(label);
+                    userGrowthChart.data.datasets[0].data.push(value);
+                    updateList('user-growth', userGrowthChart);
+                    userGrowthChart.update();
+                    saveChartData('user-growth', userGrowthChart);
+                    this.reset();
+                }
+            });
+            document.getElementById('user-growth-list').addEventListener('click', handleRemoveUserGrowth);
+
+            // 2. Sensor Usage Distribution (Pie)
+            function handleRemoveSalesDistribution(e) {
+                if (e.target.closest('.remove-btn')) {
+                    const idx = +e.target.closest('.remove-btn').dataset.idx;
+                    salesDistributionChart.data.labels.splice(idx, 1);
+                    salesDistributionChart.data.datasets[0].data.splice(idx, 1);
+                    salesDistributionChart.data.datasets[0].backgroundColor.splice(idx, 1);
+                    updateList('sales-distribution', salesDistributionChart);
+                    salesDistributionChart.update();
+                    saveChartData('sales-distribution', salesDistributionChart);
+                }
+            }
+            document.getElementById('sales-distribution-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const label = document.getElementById('sales-distribution-label').value.trim();
+                const value = parseFloat(document.getElementById('sales-distribution-value').value);
+                if (label && !isNaN(value)) {
+                    salesDistributionChart.data.labels.push(label);
+                    salesDistributionChart.data.datasets[0].data.push(value);
+                    salesDistributionChart.data.datasets[0].backgroundColor.push(
+                        `hsl(${Math.floor(Math.random() * 360)},70%,70%)`
+                    );
+                    updateList('sales-distribution', salesDistributionChart);
+                    salesDistributionChart.update();
+                    saveChartData('sales-distribution', salesDistributionChart);
+                    this.reset();
+                }
+            });
+            document.getElementById('sales-distribution-list').addEventListener('click', handleRemoveSalesDistribution);
+
+            // 3. My Project Contributions (Bar)
+            function handleRemoveMyProjects(e) {
+                if (e.target.closest('.remove-btn')) {
+                    const idx = +e.target.closest('.remove-btn').dataset.idx;
+                    myProjectsChart.data.labels.splice(idx, 1);
+                    myProjectsChart.data.datasets[0].data.splice(idx, 1);
+                    myProjectsChart.data.datasets[0].backgroundColor.splice(idx, 1);
+                    updateList('my-projects', myProjectsChart);
+                    myProjectsChart.update();
+                    saveChartData('my-projects', myProjectsChart);
+                }
+            }
+            document.getElementById('my-projects-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const label = document.getElementById('my-projects-label').value.trim();
+                const value = parseFloat(document.getElementById('my-projects-value').value);
+                if (label && !isNaN(value)) {
+                    myProjectsChart.data.labels.push(label);
+                    myProjectsChart.data.datasets[0].data.push(value);
+                    myProjectsChart.data.datasets[0].backgroundColor.push(
+                        `hsl(${Math.floor(Math.random() * 360)},70%,70%)`
+                    );
+                    updateList('my-projects', myProjectsChart);
+                    myProjectsChart.update();
+                    saveChartData('my-projects', myProjectsChart);
+                    this.reset();
+                }
+            });
+            document.getElementById('my-projects-list').addEventListener('click', handleRemoveMyProjects);
+
+            // 4. My Activity Breakdown (Doughnut)
+            function handleRemoveMyActivity(e) {
+                if (e.target.closest('.remove-btn')) {
+                    const idx = +e.target.closest('.remove-btn').dataset.idx;
+                    myActivityChart.data.labels.splice(idx, 1);
+                    myActivityChart.data.datasets[0].data.splice(idx, 1);
+                    myActivityChart.data.datasets[0].backgroundColor.splice(idx, 1);
+                    updateList('my-activity', myActivityChart);
+                    myActivityChart.update();
+                    saveChartData('my-activity', myActivityChart);
+                }
+            }
+            document.getElementById('my-activity-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const label = document.getElementById('my-activity-label').value.trim();
+                const value = parseFloat(document.getElementById('my-activity-value').value);
+                if (label && !isNaN(value)) {
+                    myActivityChart.data.labels.push(label);
+                    myActivityChart.data.datasets[0].data.push(value);
+                    myActivityChart.data.datasets[0].backgroundColor.push(
+                        `hsl(${Math.floor(Math.random() * 360)},70%,70%)`
+                    );
+                    updateList('my-activity', myActivityChart);
+                    myActivityChart.update();
+                    saveChartData('my-activity', myActivityChart);
+                    this.reset();
+                }
+            });
+            document.getElementById('my-activity-list').addEventListener('click', handleRemoveMyActivity);
+
+            // 5. My Weekly Productivity (Line)
+            function handleRemoveMyProductivity(e) {
+                if (e.target.closest('.remove-btn')) {
+                    const idx = +e.target.closest('.remove-btn').dataset.idx;
+                    myProductivityChart.data.labels.splice(idx, 1);
+                    myProductivityChart.data.datasets[0].data.splice(idx, 1);
+                    updateList('my-productivity', myProductivityChart);
+                    myProductivityChart.update();
+                    saveChartData('my-productivity', myProductivityChart);
+                }
+            }
+            document.getElementById('my-productivity-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const label = document.getElementById('my-productivity-label').value.trim();
+                const value = parseFloat(document.getElementById('my-productivity-value').value);
+                if (label && !isNaN(value)) {
+                    myProductivityChart.data.labels.push(label);
+                    myProductivityChart.data.datasets[0].data.push(value);
+                    updateList('my-productivity', myProductivityChart);
+                    myProductivityChart.update();
+                    saveChartData('my-productivity', myProductivityChart);
+                    this.reset();
+                }
+            });
+            document.getElementById('my-productivity-list').addEventListener('click', handleRemoveMyProductivity);
+
+            // --- Patch title edit to save ---
+            function setupTitleEdit(formId, titleInputId, subtitleInputId, titleDisplayId, subtitleDisplayId, chartId) {
+                const form = document.getElementById(formId);
+                const titleInput = document.getElementById(titleInputId);
+                const subtitleInput = document.getElementById(subtitleInputId);
+                const titleDisplay = document.getElementById(titleDisplayId);
+                const subtitleDisplay = document.getElementById(subtitleDisplayId);
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    let newTitle = titleInput.value.trim();
+                    let newSubtitle = subtitleInput.value.trim();
+                    if (newTitle) {
+                        const icon = titleDisplay.querySelector('i');
+                        titleDisplay.innerHTML = '';
+                        if (icon) titleDisplay.appendChild(icon);
+                        titleDisplay.appendChild(document.createTextNode(' ' + newTitle));
+                    }
+                    if (newSubtitle) {
+                        subtitleDisplay.textContent = newSubtitle;
+                    }
+                    saveTitle(chartId, newTitle, newSubtitle);
+                });
+            }
+            setupTitleEdit('user-growth-title-form', 'user-growth-title', 'user-growth-subtitle', 'user-growth-title-display', 'user-growth-subtitle-display', 'user-growth');
+            setupTitleEdit('sales-distribution-title-form', 'sales-distribution-title', 'sales-distribution-subtitle', 'sales-distribution-title-display', 'sales-distribution-subtitle-display', 'sales-distribution');
+            setupTitleEdit('my-projects-title-form', 'my-projects-title', 'my-projects-subtitle', 'my-projects-title-display', 'my-projects-subtitle-display', 'my-projects');
+            setupTitleEdit('my-activity-title-form', 'my-activity-title', 'my-activity-subtitle', 'my-activity-title-display', 'my-activity-subtitle-display', 'my-activity');
+            setupTitleEdit('my-productivity-title-form', 'my-productivity-title', 'my-productivity-subtitle', 'my-productivity-title-display', 'my-productivity-subtitle-display', 'my-productivity');
+
+            // --- Load all chart data and titles on DOMContentLoaded ---
+            document.addEventListener('DOMContentLoaded', function () {
+                loadChartData('user-growth', userGrowthChart);
+                loadChartData('sales-distribution', salesDistributionChart);
+                loadChartData('my-projects', myProjectsChart);
+                loadChartData('my-activity', myActivityChart);
+                loadChartData('my-productivity', myProductivityChart);
+
+                loadTitle('user-growth', 'user-growth-title-display', 'user-growth-subtitle-display');
+                loadTitle('sales-distribution', 'sales-distribution-title-display', 'sales-distribution-subtitle-display');
+                loadTitle('my-projects', 'my-projects-title-display', 'my-projects-subtitle-display');
+                loadTitle('my-activity', 'my-activity-title-display', 'my-activity-subtitle-display');
+                loadTitle('my-productivity', 'my-productivity-title-display', 'my-productivity-subtitle-display');
+            });
+
+            // --- Save time filter selection ---
+            const timeFilterSelect = document.querySelector('#time-filter');
+            timeFilterSelect.addEventListener('change', () => {
+                localStorage.setItem('timeFilter', timeFilterSelect.value);
+            });
+            document.addEventListener('DOMContentLoaded', () => {
+                const savedFilter = localStorage.getItem('timeFilter');
+                if (savedFilter) {
+                    timeFilterSelect.value = savedFilter;
+                    timeFilterSelect.dispatchEvent(new Event('change'));
+                }
+            });
+
+            // --- Save theme selection (already handled in original code) ---
+        </script>
+
+        <section class="card">
+            
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
+                <h2 class="text-xl font-semibold flex items-center">
+                    India Electronics & Robotics Competitions
+                    <span id="competition-live-indicator" class="ml-2 text-green-500 animate-pulse text-base">(Live)</span>
+                </h2>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                    <label for="competition-filter" class="font-medium text-gray-700">Filter:</label>
+                    <select id="competition-filter" class="filter-select">
+                        <option value="all">All</option>
+                        <option value="conference">Conference</option>
+                        <option value="competition">Competition</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="exhibition">Exhibition</option>
+                        <option value="fest">Fest</option>
+                        <option value="international">International</option>
+                        <option value="karnataka">Karnataka</option>
+                        <option value="tamilnadu">Tamil Nadu</option>
+                        <option value="kerala">Kerala</option>
+                        <option value="assam">Assam</option>
+                        <option value="gujarat">Gujarat</option>
+                        <option value="maharashtra">Maharashtra</option>
+                        <option value="bihar">Bihar</option>
+                        <option value="westbengal">West Bengal</option>
+                    </select>
+                    <input type="text" id="competition-search" placeholder="Search competitions..." class="filter-select w-48" />
+                    <button id="competition-scan" class="bg-blue-500 text-white px-3 py-1 rounded flex items-center gap-1 hover:bg-blue-600 transition">
+                        <i class="bx bx-refresh bx-spin"></i> Update Scan
+                    </button>
+                    <button id="competition-export" class="bg-green-500 text-grey px-3 py-1 rounded flex items-center gap-1 hover:bg-green-600 transition">
+                        <i class="bx bx-download"></i> Export
+                    </button>
+                    <span class="text-xs text-gray-500 ml-2">Filter, search, scan, or export</span>
+                </div>
+            <script>
+                // --- Table Search ---
+                document.getElementById('competition-search').addEventListener('input', function () {
+                    const search = this.value.toLowerCase();
+                    document.querySelectorAll('#competitions-table tbody tr').forEach(row => {
+                        row.style.display = Array.from(row.children).some(td =>
+                            td.textContent.toLowerCase().includes(search)
+                        ) ? '' : 'none';
+                    });
+                });
+
+                // --- Update Scan (refresh table) ---
+                document.getElementById('competition-scan').addEventListener('click', function () {
+                    // For demo: just animate button and reload table rows (simulate scan)
+                    const btn = this;
+                    btn.querySelector('i').classList.add('bx-spin');
+                    setTimeout(() => {
+                        btn.querySelector('i').classList.remove('bx-spin');
+                        // Optionally, you could fetch new data here
+                    }, 1000);
+                });
+
+                // --- Export Table to CSV ---
+                document.getElementById('competition-export').addEventListener('click', function () {
+                    const table = document.getElementById('competitions-table');
+                    let csv = [];
+                    for (let row of table.rows) {
+                        let rowData = [];
+                        for (let cell of row.cells) {
+                            // Remove newlines and commas from cell text
+                            let text = cell.innerText.replace(/[\n\r]+/g, ' ').replace(/,/g, ';');
+                            rowData.push('"' + text + '"');
+                        }
+                        csv.push(rowData.join(','));
+                    }
+                    const csvContent = "data:text/csv;charset=utf-8," + csv.join('\n');
+                    const link = document.createElement('a');
+                    link.setAttribute('href', encodeURI(csvContent));
+                    link.setAttribute('download', 'competitions.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+            </script>
+            <style>
+                /* Enhanced Table Styles */
+                #competitions-table {
+                    border-radius: 1rem;
+                    overflow: hidden;
+                    background: linear-gradient(90deg, #f8fafc 0%, #e0e7ef 100%);
+                    box-shadow: 0 4px 24px rgba(3, 28, 66, 0.08);
+                    font-size: 1rem;
+                    border-collapse: separate;
+                    border-spacing: 10;
+                }
+                #competitions-table th, #competitions-table td {
+                    border: .3px solid #00000094;
+                    padding: 1rem 0.75rem;
+                    vertical-align: top;
+                    transition: background 0.2s, color 0.2s;
+                }
+                #competitions-table th {
+                    background: linear-gradient(90deg, #3b82f6 80%, #6366f1 100%);
+                    color: #fff;
+                    font-weight: 700;
+                    letter-spacing: 0.02em;
+                    border-bottom: 2px solid #000;
+                }
+                #competitions-table thead th {
+                    border-top: none;
+                }
+                #competitions-table tbody tr {
+                    background: #f0f9ff;
+                    color: #07101a;
+                    box-sizing: border-box;
+                    transition: box-shadow 0.2s, background 0.2s, transform 0.2s;
+                }
+                #competitions-table tbody tr:hover, th:hover {
+                    background: #e3f6f8;
+                    box-shadow: 10px 2px 12px rgba(59, 130, 246, 0.08);
+                    margin-top: 10px;
+                    border: 1 #000;
+                    transform: scale(1.001);
+                    margin-bottom: 10px;
+                    z-index: 2;
+                }
+                #competitions-table td a {
+                    color: #2563eb;
+                    text-decoration: underline;
+                    transition: color 0.2s;
+                }
+                #competitions-table td a:hover {
+                    color: #1e40af;
+                }
+                /* Responsive table scroll */
+                .overflow-x-auto {
+                    border-radius: 1rem;
+                    background: #f8fafc;
+                    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.04);
+                }
+                /* Search/Filter/Export controls */
+                #competition-search:focus, #competition-filter:focus {
+                    border-color: #3b82f6;
+                    box-shadow: 0 0 0 2px #3b82f655;
+                }
+                @media (max-width: 640px) {
+                    #competitions-table th, #competitions-table td {
+                        padding: 0.5rem 0.25rem;
+                        font-size: 0.92rem;
+                    }
+                    #competition-search {
+                        width: 100%;
+                    }
+                }
+            </style>
+            <div class="overflow-x-auto mt-4">
+                <table class="metrics-table min-w-full" id="competitions-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Competition</th>
+                            <th>Place</th>
+                            <th>Type</th>
+                            <th>Details</th>
+                            <th>Register</th>
+                            <th>Prize</th>
+                            <th>Eligibility</th>
+                            <th>Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows as before (unchanged) -->
+                        <tr>
+                            <td>April 28–30, 2025</td>
+                            <td>ICC - ROBINS 2025<br><span class="text-xs text-gray-500">Second International Conference on Cognitive Robotics and Intelligent Systems</span></td>
+                            <td>KPR Institute of Engineering and Technology, Coimbatore, Tamil Nadu</td>
+                            <td>Conference with Robotics Competitions</td>
+                            <td>Robotics showcases, competitions, and paper presentations on cognitive robotics and intelligent systems. Organized by KPRIET, a top engineering college.</td>
+                            <td><a href="https://kpriet.ac.in" target="_blank" class="text-blue-600 underline">kpriet.ac.in</a></td>
+                            <td>TBD (certificates, cash prizes, or publication opportunities)</td>
+                            <td>College students (UG/PG) in engineering or related fields</td>
+                            <td><a href="mailto:info@kpriet.ac.in" class="text-blue-600 underline">info@kpriet.ac.in</a></td>
+                        </tr>
+                        <tr>
+                            <td>August 1–3, 2025</td>
+                            <td>AUTOROBOT 2025</td>
+                            <td>Coimbatore, Tamil Nadu</td>
+                            <td>Tech Exhibition with Robotics Competitions</td>
+                            <td>Robotics, AI, and IoT demos with competitions for students. Focuses on real-time challenges and industry networking.</td>
+                            <td>TBD (see <a href="https://www.conferencealerts.in" target="_blank" class="text-blue-600 underline">conferencealerts.in</a>)</td>
+                            <td>TBD (cash prizes and recognition)</td>
+                            <td>College students (UG/PG) in STEM</td>
+                            <td>TBD (monitor <a href="https://www.conferencealerts.in" target="_blank" class="text-blue-600 underline">conferencealerts.in</a>)</td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely June–August 2025)</td>
+                            <td>DD-Robocon India 2025</td>
+                            <td>TBD (likely Bengaluru, Karnataka, or national venue)</td>
+                            <td>Robotics Competition</td>
+                            <td>National-level robotics challenge for engineering students, powered by MathWorks. Involves designing robots for complex tasks.</td>
+                            <td>TBD (see <a href="https://www.iitd.ac.in" target="_blank" class="text-blue-600 underline">iitd.ac.in</a> or <a href="https://www.roboconindia.org" target="_blank" class="text-blue-600 underline">roboconindia.org</a>)</td>
+                            <td>Cash prizes (up to ₹5 million in past events), internships</td>
+                            <td>College students (UG/PG) in engineering</td>
+                            <td>TBD (likely <a href="mailto:robocon@iitd.ac.in" class="text-blue-600 underline">robocon@iitd.ac.in</a>)</td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely 2025)</td>
+                            <td>Robotex India Regional Event (Coimbatore)</td>
+                            <td>Coimbatore, Tamil Nadu</td>
+                            <td>Robotics Competition</td>
+                            <td>Challenges like Line Following, Rescue Missions, and Sumo. Focuses on STEAM education for college students.</td>
+                            <td><a href="https://www.robotex-india.in" target="_blank" class="text-blue-600 underline">robotex-india.in</a></td>
+                            <td>TBD (certificates, kits, or national event qualification)</td>
+                            <td>College students (UG/PG) in STEM</td>
+                            <td><a href="mailto:info@robotex-india.in" class="text-blue-600 underline">info@robotex-india.in</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely 2025)</td>
+                            <td>Technoxian World Robotics Championship 2025</td>
+                            <td>TBD (possibly Bengaluru, Karnataka, or national venue)</td>
+                            <td>International Robotics Competition</td>
+                            <td>Includes RoboSoccer and other challenges. Global platform with participation from 50+ nations.</td>
+                            <td><a href="https://www.technoxian.com" target="_blank" class="text-blue-600 underline">technoxian.com</a></td>
+                            <td>Cash prizes (up to ₹1 million in past events), global recognition</td>
+                            <td>College students (UG/PG) in robotics or automation</td>
+                            <td><a href="mailto:info@technoxian.com" class="text-blue-600 underline">info@technoxian.com</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (announced by May 2025)</td>
+                            <td>ISRO Robotics Challenge 2025</td>
+                            <td>Bengaluru, Karnataka</td>
+                            <td>Robotics Competition</td>
+                            <td>Organized by URSC, ISRO. Focuses on space-related robotics challenges for engineering students.</td>
+                            <td><a href="https://www.ursc.gov.in" target="_blank" class="text-blue-600 underline">ursc.gov.in</a></td>
+                            <td>TBD (internships, certificates)</td>
+                            <td>College students (UG/PG) in engineering</td>
+                            <td><a href="mailto:ursc@isro.gov.in" class="text-blue-600 underline">ursc@isro.gov.in</a></td>
+                        </tr>
+                        <tr>
+                            <td>January–February 2026</td>
+                            <td>Kshitij Robotix 2026<br><span class="text-xs text-gray-500">Robotix (Kshitij Techno-Management Fest)</span></td>
+                            <td>IIT Kharagpur, West Bengal</td>
+                            <td>Robotics Competition</td>
+                            <td>Asia’s largest techno-management fest with robotics events like autonomous robot challenges.</td>
+                            <td><a href="https://www.ktj.in" target="_blank" class="text-blue-600 underline">ktj.in</a></td>
+                            <td>₹5 million (total fest prize pool)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:contact@ktj.in" class="text-blue-600 underline">contact@ktj.in</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely October 2025)</td>
+                            <td>Amalthea RobomerZ 2025<br><span class="text-xs text-gray-500">RobomerZ (Amalthea Technical Summit)</span></td>
+                            <td>IIT Gandhinagar, Gujarat</td>
+                            <td>Robotics Workshop and Competition</td>
+                            <td>Robotics and mechatronics challenges with workshops for college students.</td>
+                            <td><a href="https://www.amalthea.iitgn.ac.in" target="_blank" class="text-blue-600 underline">amalthea.iitgn.ac.in</a></td>
+                            <td>TBD (cash prizes, certificates)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:amalthea@iitgn.ac.in" class="text-blue-600 underline">amalthea@iitgn.ac.in</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely 2025)</td>
+                            <td>Robofest India 2025</td>
+                            <td>TBD (possibly Chennai, Tamil Nadu, or Bengaluru, Karnataka)</td>
+                            <td>Robotics Competition</td>
+                            <td>International competition focusing on autonomous robots and STEM. Open to any robotics kits and programming languages.</td>
+                            <td><a href="https://www.robofestindia.org" target="_blank" class="text-blue-600 underline">robofestindia.org</a></td>
+                            <td>TBD (certificates, kits)</td>
+                            <td>College students (UG/PG) in STEM</td>
+                            <td><a href="mailto:info@robofestindia.org" class="text-blue-600 underline">info@robofestindia.org</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely November 2025)</td>
+                            <td>WRO India 2025<br><span class="text-xs text-gray-500">World Robot Olympiad India</span></td>
+                            <td>TBD (possibly Kochi, Kerala, or Chennai, Tamil Nadu)</td>
+                            <td>Robotics Competition</td>
+                            <td>National qualifier for the global WRO, focusing on robotics challenges like RoboMission.</td>
+                            <td><a href="https://www.wroindia.org" target="_blank" class="text-blue-600 underline">wroindia.org</a></td>
+                            <td>Qualification for global WRO, certificates</td>
+                            <td>College students (UG, up to age 25)</td>
+                            <td><a href="mailto:info@wroindia.org" class="text-blue-600 underline">info@wroindia.org</a></td>
+                        </tr>
+                        <tr>
+                            <td>December 2025</td>
+                            <td>Techfest Robotics Challenge 2025</td>
+                            <td>IIT Bombay, Maharashtra</td>
+                            <td>Robotics Competition</td>
+                            <td>Part of IIT Bombay’s Techfest, featuring events like RoboWars and autonomous robot races.</td>
+                            <td><a href="https://www.techfest.org" target="_blank" class="text-blue-600 underline">techfest.org</a></td>
+                            <td>₹2 million (total fest prize pool)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:info@techfest.org" class="text-blue-600 underline">info@techfest.org</a></td>
+                        </tr>
+                        <tr>
+                            <td>January 2025</td>
+                            <td>Shaastra Robotics Challenge 2025</td>
+                            <td>IIT Madras, Chennai, Tamil Nadu</td>
+                            <td>Robotics Competition</td>
+                            <td>Part of Shaastra tech fest, includes autonomous and manual robotics challenges.</td>
+                            <td><a href="https://www.shaastra.org" target="_blank" class="text-blue-600 underline">shaastra.org</a></td>
+                            <td>TBD (cash prizes, certificates)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:contact@shaastra.org" class="text-blue-600 underline">contact@shaastra.org</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely 2025)</td>
+                            <td>Robotex India Regional Event (Kerala)</td>
+                            <td>Kochi, Kerala</td>
+                            <td>Robotics Competition</td>
+                            <td>Regional event with challenges like Sumo and Line Following. Part of Robotex India’s STEAM initiative.</td>
+                            <td><a href="https://www.robotex-india.in" target="_blank" class="text-blue-600 underline">robotex-india.in</a></td>
+                            <td>TBD (certificates, national event qualification)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:info@robotex-india.in" class="text-blue-600 underline">info@robotex-india.in</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely March 2025)</td>
+                            <td>Technovation 2025</td>
+                            <td>NIT Trichy, Tamil Nadu</td>
+                            <td>Technical Fest with Robotics</td>
+                            <td>Includes robotics competitions like RoboRace and autonomous challenges.</td>
+                            <td><a href="https://www.technovation.nitt.edu" target="_blank" class="text-blue-600 underline">technovation.nitt.edu</a></td>
+                            <td>TBD (cash prizes, certificates)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:technovation@nitt.edu" class="text-blue-600 underline">technovation@nitt.edu</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely February 2025)</td>
+                            <td>Pragyan Robotics Challenge 2025</td>
+                            <td>NIT Trichy, Tamil Nadu</td>
+                            <td>Robotics Competition</td>
+                            <td>Part of Pragyan tech fest, featuring robotics events like maze-solving robots.</td>
+                            <td><a href="https://www.pragyan.org" target="_blank" class="text-blue-600 underline">pragyan.org</a></td>
+                            <td>TBD (cash prizes, certificates)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:contact@pragyan.org" class="text-blue-600 underline">contact@pragyan.org</a></td>
+                        </tr>
+                        <tr>
+                            <td>January–February 2025</td>
+                            <td>Anwesha Robotics Event 2025</td>
+                            <td>IIT Patna, Bihar</td>
+                            <td>Robotics Competition</td>
+                            <td>Part of Anwesha techno-cultural fest, includes robotics workshops and competitions.</td>
+                            <td><a href="https://www.anwesha.info" target="_blank" class="text-blue-600 underline">anwesha.info</a></td>
+                            <td>TBD (cash prizes, certificates)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:info@anwesha.info" class="text-blue-600 underline">info@anwesha.info</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely March 2025)</td>
+                            <td>Xpecto Robotics Challenge 2025</td>
+                            <td>IIT Mandi, Himachal Pradesh</td>
+                            <td>Robotics Competition</td>
+                            <td>Part of Xpecto science and tech fest, featuring robotics challenges.</td>
+                            <td><a href="https://www.xpecto.in" target="_blank" class="text-blue-600 underline">xpecto.in</a></td>
+                            <td>TBD (cash prizes)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:contact@xpecto.in" class="text-blue-600 underline">contact@xpecto.in</a></td>
+                        </tr>
+                        <tr>
+                            <td>March 2025</td>
+                            <td>Exodia Robotics Event 2025</td>
+                            <td>IIT Mandi, Himachal Pradesh</td>
+                            <td>Robotics Competition</td>
+                            <td>Part of Exodia techno-cultural fest, includes robotics competitions.</td>
+                            <td><a href="https://www.exodia.in" target="_blank" class="text-blue-600 underline">exodia.in</a></td>
+                            <td>TBD (cash prizes, certificates)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:info@exodia.in" class="text-blue-600 underline">info@exodia.in</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely October 2025)</td>
+                            <td>Tathva Robotics Challenge 2025</td>
+                            <td>NIT Calicut, Kerala</td>
+                            <td>Robotics Competition</td>
+                            <td>Part of Tathva tech fest, featuring events like RoboWars and autonomous robot challenges.</td>
+                            <td><a href="https://www.tathva.org" target="_blank" class="text-blue-600 underline">tathva.org</a></td>
+                            <td>TBD (cash prizes, certificates)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:contact@tathva.org" class="text-blue-600 underline">contact@tathva.org</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely September 2025)</td>
+                            <td>Techniche Robotics Challenge 2025</td>
+                            <td>IIT Guwahati, Assam</td>
+                            <td>Robotics Competition</td>
+                            <td>Part of Techniche tech fest, includes robotics events like maze solvers and combat robots.</td>
+                            <td><a href="https://www.techniche.org" target="_blank" class="text-blue-600 underline">techniche.org</a></td>
+                            <td>TBD (cash prizes, certificates)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:info@techniche.org" class="text-blue-600 underline">info@techniche.org</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely September 2025)</td>
+                            <td>Aarush Robotics Challenge 2025</td>
+                            <td>SRM Institute, Chennai, Tamil Nadu</td>
+                            <td>Robotics Competition</td>
+                            <td>Part of Aarush tech fest, featuring robotics events like RoboRace and autonomous challenges.</td>
+                            <td><a href="https://www.aarush.net" target="_blank" class="text-blue-600 underline">aarush.net</a></td>
+                            <td>TBD (cash prizes, certificates)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:contact@aarush.net" class="text-blue-600 underline">contact@aarush.net</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely February 2025)</td>
+                            <td>Incandescence Robotics Event 2025</td>
+                            <td>NIT Surathkal, Karnataka</td>
+                            <td>Robotics Competition</td>
+                            <td>Part of Incandescence tech fest, includes robotics challenges like Line Following and RoboWars.</td>
+                            <td><a href="https://www.incandescence.nitk.ac.in" target="_blank" class="text-blue-600 underline">incandescence.nitk.ac.in</a></td>
+                            <td>TBD (cash prizes, certificates)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:info@incandescence.nitk.ac.in" class="text-blue-600 underline">info@incandescence.nitk.ac.in</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely October 2025)</td>
+                            <td>TechXetra Robotics Challenge 2025</td>
+                            <td>Tezpur University, Assam</td>
+                            <td>Robotics Competition</td>
+                            <td>Part of TechXetra tech fest, featuring robotics events like autonomous navigation.</td>
+                            <td><a href="https://www.techxetra.org" target="_blank" class="text-blue-600 underline">techxetra.org</a></td>
+                            <td>TBD (cash prizes, certificates)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:info@techxetra.org" class="text-blue-600 underline">info@techxetra.org</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely 2025)</td>
+                            <td>Robotex India Regional Event (Karnataka)</td>
+                            <td>Bengaluru, Karnataka</td>
+                            <td>Robotics Competition</td>
+                            <td>Regional event with challenges like Rescue Missions and Sumo. Part of Robotex India’s STEAM initiative.</td>
+                            <td><a href="https://www.robotex-india.in" target="_blank" class="text-blue-600 underline">robotex-india.in</a></td>
+                            <td>TBD (certificates, national event qualification)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:info@robotex-india.in" class="text-blue-600 underline">info@robotex-india.in</a></td>
+                        </tr>
+                        <tr>
+                            <td>TBD (likely September 2025)</td>
+                            <td>Vortex Robotics Challenge 2025</td>
+                            <td>VIT Vellore, Tamil Nadu</td>
+                            <td>Robotics Competition</td>
+                            <td>Part of Vortex tech fest, featuring events like RoboSoccer and autonomous challenges.</td>
+                            <td><a href="https://www.vitvortex.com" target="_blank" class="text-blue-600 underline">vitvortex.com</a></td>
+                            <td>TBD (cash prizes, certificates)</td>
+                            <td>College students (UG/PG)</td>
+                            <td><a href="mailto:vortex@vit.ac.in" class="text-blue-600 underline">vortex@vit.ac.in</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <script>
+                // Simple filter for competitions table
+                document.getElementById('competition-filter').addEventListener('change', function () {
+                    const value = this.value;
+                    const rows = document.querySelectorAll('#competitions-table tbody tr');
+                    rows.forEach(row => {
+                        let show = false;
+                        const type = row.children[3].textContent.toLowerCase();
+                        const place = row.children[2].textContent.toLowerCase();
+                        if (value === 'all') show = true;
+                        else if (value === 'conference' && type.includes('conference')) show = true;
+                        else if (value === 'competition' && type.includes('competition')) show = true;
+                        else if (value === 'workshop' && type.includes('workshop')) show = true;
+                        else if (value === 'exhibition' && type.includes('exhibition')) show = true;
+                        else if (value === 'fest' && (type.includes('fest') || type.includes('tech fest'))) show = true;
+                        else if (value === 'international' && type.includes('international')) show = true;
+                        else if (value === 'karnataka' && place.includes('karnataka')) show = true;
+                        else if (value === 'tamilnadu' && place.includes('tamil nadu')) show = true;
+                        else if (value === 'kerala' && place.includes('kerala')) show = true;
+                        else if (value === 'assam' && place.includes('assam')) show = true;
+                        else if (value === 'gujarat' && place.includes('gujarat')) show = true;
+                        else if (value === 'maharashtra' && place.includes('maharashtra')) show = true;
+                        else if (value === 'bihar' && place.includes('bihar')) show = true;
+                        else if (value === 'westbengal' && place.includes('west bengal')) show = true;
+                        row.style.display = show ? '' : 'none';
+                    });
+                });
+            </script>
+
+            <script src="https://unpkg.com/boxicons@2.1.3/dist/boxicons.js"></script>
+            <script>
+                // Profile name in header
+                const defaultProfile = { name: "Admin" };
+                function loadHeaderName() {
+                    const profileData = JSON.parse(localStorage.getItem('profileData')) || defaultProfile;
+                    document.querySelector('#header-name').textContent = `Welcome, ${profileData.name}`;
+                }
+
+                // Sidebar toggle for desktop/mobile
+                const toggleSidebar = document.querySelector('#toggle-sidebar');
+                const sidebar = document.querySelector('.sidebar');
+                const mainContent = document.querySelector('.main-content');
+                function handleSidebarToggle() {
+                    sidebar.classList.toggle('hidden');
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.toggle('active');
+                    }
+                }
+                toggleSidebar.addEventListener('click', handleSidebarToggle);
+
+                // Hide sidebar by default on mobile
+                function handleResize() {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.add('hidden');
+                    } else {
+                        sidebar.classList.remove('hidden');
+                        sidebar.classList.remove('active');
+                    }
+                }
+                window.addEventListener('resize', handleResize);
+                handleResize();
+
+                // Theme toggle
+                const themeToggle = document.querySelector('#theme-toggle');
+                function setTheme(theme) {
+                    document.body.setAttribute('data-theme', theme);
+                    if (theme === 'dark') {
+                        themeToggle.querySelector('i').classList.replace('bx-moon', 'bx-sun');
+                    } else {
+                        themeToggle.querySelector('i').classList.replace('bx-sun', 'bx-moon');
+                    }
+                    localStorage.setItem('theme', theme);
+                }
+                themeToggle.addEventListener('click', () => {
+                    const currentTheme = document.body.getAttribute('data-theme');
+                    setTheme(currentTheme === 'light' ? 'dark' : 'light');
+                });
+                // Load theme from storage
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme) setTheme(savedTheme);
+
+                // Chart.js initialization
+                // 1. Robot Deployments Over Time
+                const userGrowthCtx = document.getElementById('user-growth-chart').getContext('2d');
+                const userGrowthChart = new Chart(userGrowthCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'New Deployments',
+                            data: [100, 150, 200, 180, 220, 250],
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+                });
+
+                // 2. Sensor Usage Distribution
+                const salesDistributionCtx = document.getElementById('sales-distribution-chart').getContext('2d');
+                const salesDistributionChart = new Chart(salesDistributionCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Infrared', 'Ultrasonic', 'Camera', 'Touch'],
+                        datasets: [{
+                            data: [40, 35, 15, 10],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.5)',
+                                'rgba(34, 197, 94, 0.5)',
+                                'rgba(234, 179, 8, 0.5)',
+                                'rgba(239, 68, 68, 0.5)'
+                            ]
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+
+                // 3. My Project Contributions (Bar)
+                const myProjectsCtx = document.getElementById('my-projects-chart').getContext('2d');
+                const myProjectsChart = new Chart(myProjectsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Website', 'Robotics', 'AI', 'IoT', 'Automation'],
+                        datasets: [{
+                            label: 'Contributions',
+                            data: [12, 9, 15, 7, 10],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.7)',
+                                'rgba(34, 197, 94, 0.7)',
+                                'rgba(234, 179, 8, 0.7)',
+                                'rgba(139, 92, 246, 0.7)',
+                                'rgba(239, 68, 68, 0.7)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+
+                // 4. My Activity Breakdown (Doughnut)
+                const myActivityCtx = document.getElementById('my-activity-chart').getContext('2d');
+                const myActivityChart = new Chart(myActivityCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Coding', 'Meetings', 'Testing', 'Documentation'],
+                        datasets: [{
+                            data: [50, 20, 15, 15],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.7)',
+                                'rgba(34, 197, 94, 0.7)',
+                                'rgba(234, 179, 8, 0.7)',
+                                'rgba(239, 68, 68, 0.7)'
+                            ]
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+
+                // 5. My Weekly Productivity (Line)
+                const myProductivityCtx = document.getElementById('my-productivity-chart').getContext('2d');
+                const myProductivityChart = new Chart(myProductivityCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Tasks Completed',
+                            data: [8, 10, 7, 12, 9, 6, 5],
+                            borderColor: 'rgba(234, 88, 12, 1)',
+                            backgroundColor: 'rgba(236, 72, 153, 0.2)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+
+                // Time filter for Robot Deployments chart
+                const timeFilter = document.querySelector('#time-filter');
+                timeFilter.addEventListener('change', () => {
+                    const period = timeFilter.value;
+                    let data, labels;
+                    if (period === '7days') {
+                        labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                        data = [5, 7, 6, 8, 7, 9, 10];
+                    } else if (period === '30days') {
+                        labels = Array.from({ length: 4 }, (_, i) => `Week ${i + 1}`);
+                        data = [30, 35, 40, 45];
+                    } else {
+                        labels = ['Apr', 'May', 'Jun'];
+                        data = [180, 220, 250];
+                    }
+                    userGrowthChart.data.labels = labels;
+                    userGrowthChart.data.datasets[0].data = data;
+                    updateList('user-growth', userGrowthChart);
+                    userGrowthChart.update();
+                    saveChartData('user-growth', userGrowthChart);
+                });
+
+                // Lazy loading for metrics table rows (adds visible class for animation)
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                document.querySelectorAll('#metrics-table tr').forEach(row => {
+                    observer.observe(row);
+                });
+
+                // Keyboard shortcut (Ctrl + K) to focus filter
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                        e.preventDefault();
+                        timeFilter.focus();
+                    }
+                });
+
+                // Accessibility: close sidebar with Escape on mobile
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && window.innerWidth <= 768 && sidebar.classList.contains('active')) {
+                        sidebar.classList.remove('active');
+                        sidebar.classList.add('hidden');
+                    }
+                });
+
+                // Load header name on DOM ready
+                document.addEventListener('DOMContentLoaded', loadHeaderName);
+
+                // --- Editable Graphs: Add/Remove Data Functionality ---
+
+                // Utility to update the list for each chart
+                function updateList(chartId, chart) {
+                    const list = document.getElementById(`${chartId}-list`);
+                    if (list.classList.contains('hidden')) return;
+                    list.innerHTML = '';
+                    chart.data.labels.forEach((label, idx) => {
+                        const li = document.createElement('li');
+                        li.className = "flex items-center justify-between border-b py-1";
+                        li.innerHTML = `
+                    <span>
+                        <span class="font-semibold">${label}</span>
+                        <span class="ml-2 text-gray-500">${chart.data.datasets[0].data[idx]}</span>
+                    </span>
+                    <button type="button" aria-label="Remove" class="remove-btn text-red-500 hover:text-red-700 ml-2" data-idx="${idx}"><i class="bx bx-trash"></i></button>
+                `;
+                        list.appendChild(li);
+                    });
+                }
+
+                // 1. Robot Deployments Over Time (Line)
+                function handleRemoveUserGrowth(e) {
+                    if (e.target.closest('.remove-btn')) {
+                        const idx = +e.target.closest('.remove-btn').dataset.idx;
+                        userGrowthChart.data.labels.splice(idx, 1);
+                        userGrowthChart.data.datasets[0].data.splice(idx, 1);
+                        updateList('user-growth', userGrowthChart);
+                        userGrowthChart.update();
+                        saveChartData('user-growth', userGrowthChart);
+                    }
+                }
+                document.getElementById('user-growth-form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const label = document.getElementById('user-growth-label').value.trim();
+                    const value = parseFloat(document.getElementById('user-growth-value').value);
+                    if (label && !isNaN(value)) {
+                        userGrowthChart.data.labels.push(label);
+                        userGrowthChart.data.datasets[0].data.push(value);
+                        updateList('user-growth', userGrowthChart);
+                        userGrowthChart.update();
+                        saveChartData('user-growth', userGrowthChart);
+                        this.reset();
+                    }
+                });
+                document.getElementById('user-growth-list').addEventListener('click', handleRemoveUserGrowth);
+
+                // 2. Sensor Usage Distribution (Pie)
+                function handleRemoveSalesDistribution(e) {
+                    if (e.target.closest('.remove-btn')) {
+                        const idx = +e.target.closest('.remove-btn').dataset.idx;
+                        salesDistributionChart.data.labels.splice(idx, 1);
+                        salesDistributionChart.data.datasets[0].data.splice(idx, 1);
+                        salesDistributionChart.data.datasets[0].backgroundColor.splice(idx, 1);
+                        updateList('sales-distribution', salesDistributionChart);
+                        salesDistributionChart.update();
+                        saveChartData('sales-distribution', salesDistributionChart);
+                    }
+                }
+                document.getElementById('sales-distribution-form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const label = document.getElementById('sales-distribution-label').value.trim();
+                    const value = parseFloat(document.getElementById('sales-distribution-value').value);
+                    if (label && !isNaN(value)) {
+                        salesDistributionChart.data.labels.push(label);
+                        salesDistributionChart.data.datasets[0].data.push(value);
+                        salesDistributionChart.data.datasets[0].backgroundColor.push(
+                            `hsl(${Math.floor(Math.random() * 360)},70%,70%)`
+                        );
+                        updateList('sales-distribution', salesDistributionChart);
+                        salesDistributionChart.update();
+                        saveChartData('sales-distribution', salesDistributionChart);
+                        this.reset();
+                    }
+                });
+                document.getElementById('sales-distribution-list').addEventListener('click', handleRemoveSalesDistribution);
+
+                // 3. My Project Contributions (Bar)
+                function handleRemoveMyProjects(e) {
+                    if (e.target.closest('.remove-btn')) {
+                        const idx = +e.target.closest('.remove-btn').dataset.idx;
+                        myProjectsChart.data.labels.splice(idx, 1);
+                        myProjectsChart.data.datasets[0].data.splice(idx, 1);
+                        myProjectsChart.data.datasets[0].backgroundColor.splice(idx, 1);
+                        updateList('my-projects', myProjectsChart);
+                        myProjectsChart.update();
+                        saveChartData('my-projects', myProjectsChart);
+                    }
+                }
+                document.getElementById('my-projects-form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const label = document.getElementById('my-projects-label').value.trim();
+                    const value = parseFloat(document.getElementById('my-projects-value').value);
+                    if (label && !isNaN(value)) {
+                        myProjectsChart.data.labels.push(label);
+                        myProjectsChart.data.datasets[0].data.push(value);
+                        myProjectsChart.data.datasets[0].backgroundColor.push(
+                            `hsl(${Math.floor(Math.random() * 360)},70%,70%)`
+                        );
+                        updateList('my-projects', myProjectsChart);
+                        myProjectsChart.update();
+                        saveChartData('my-projects', myProjectsChart);
+                        this.reset();
+                    }
+                });
+                document.getElementById('my-projects-list').addEventListener('click', handleRemoveMyProjects);
+
+                // 4. My Activity Breakdown (Doughnut)
+                function handleRemoveMyActivity(e) {
+                    if (e.target.closest('.remove-btn')) {
+                        const idx = +e.target.closest('.remove-btn').dataset.idx;
+                        myActivityChart.data.labels.splice(idx, 1);
+                        myActivityChart.data.datasets[0].data.splice(idx, 1);
+                        myActivityChart.data.datasets[0].backgroundColor.splice(idx, 1);
+                        updateList('my-activity', myActivityChart);
+                        myActivityChart.update();
+                        saveChartData('my-activity', myActivityChart);
+                    }
+                }
+                document.getElementById('my-activity-form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const label = document.getElementById('my-activity-label').value.trim();
+                    const value = parseFloat(document.getElementById('my-activity-value').value);
+                    if (label && !isNaN(value)) {
+                        myActivityChart.data.labels.push(label);
+                        myActivityChart.data.datasets[0].data.push(value);
+                        myActivityChart.data.datasets[0].backgroundColor.push(
+                            `hsl(${Math.floor(Math.random() * 360)},70%,70%)`
+                        );
+                        updateList('my-activity', myActivityChart);
+                        myActivityChart.update();
+                        saveChartData('my-activity', myActivityChart);
+                        this.reset();
+                    }
+                });
+                document.getElementById('my-activity-list').addEventListener('click', handleRemoveMyActivity);
+
+                // 5. My Weekly Productivity (Line)
+                function handleRemoveMyProductivity(e) {
+                    if (e.target.closest('.remove-btn')) {
+                        const idx = +e.target.closest('.remove-btn').dataset.idx;
+                        myProductivityChart.data.labels.splice(idx, 1);
+                        myProductivityChart.data.datasets[0].data.splice(idx, 1);
+                        updateList('my-productivity', myProductivityChart);
+                        myProductivityChart.update();
+                        saveChartData('my-productivity', myProductivityChart);
+                    }
+                }
+                document.getElementById('my-productivity-form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const label = document.getElementById('my-productivity-label').value.trim();
+                    const value = parseFloat(document.getElementById('my-productivity-value').value);
+                    if (label && !isNaN(value)) {
+                        myProductivityChart.data.labels.push(label);
+                        myProductivityChart.data.datasets[0].data.push(value);
+                        updateList('my-productivity', myProductivityChart);
+                        myProductivityChart.update();
+                        saveChartData('my-productivity', myProductivityChart);
+                        this.reset();
+                    }
+                });
+                document.getElementById('my-productivity-list').addEventListener('click', handleRemoveMyProductivity);
+
+                // --- Editable Graph Titles/Subtitles ---
+                function setupTitleEdit(formId, titleInputId, subtitleInputId, titleDisplayId, subtitleDisplayId, chartId) {
+                    const form = document.getElementById(formId);
+                    const titleInput = document.getElementById(titleInputId);
+                    const subtitleInput = document.getElementById(subtitleInputId);
+                    const titleDisplay = document.getElementById(titleDisplayId);
+                    const subtitleDisplay = document.getElementById(subtitleDisplayId);
+
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        if (titleInput.value.trim()) {
+                            // Keep icon if present
+                            const icon = titleDisplay.querySelector('i');
+                            titleDisplay.innerHTML = '';
+                            if (icon) titleDisplay.appendChild(icon);
+                            titleDisplay.appendChild(document.createTextNode(' ' + titleInput.value.trim()));
+                        }
+                        if (subtitleInput.value.trim()) {
+                            subtitleDisplay.textContent = subtitleInput.value.trim();
+                        }
+                        saveTitle(chartId, titleInput.value.trim(), subtitleInput.value.trim());
+                    });
+                }
+                setupTitleEdit('user-growth-title-form', 'user-growth-title', 'user-growth-subtitle', 'user-growth-title-display', 'user-growth-subtitle-display', 'user-growth');
+                setupTitleEdit('sales-distribution-title-form', 'sales-distribution-title', 'sales-distribution-subtitle', 'sales-distribution-title-display', 'sales-distribution-subtitle-display', 'sales-distribution');
+                setupTitleEdit('my-projects-title-form', 'my-projects-title', 'my-projects-subtitle', 'my-projects-title-display', 'my-projects-subtitle-display', 'my-projects');
+                setupTitleEdit('my-activity-title-form', 'my-activity-title', 'my-activity-subtitle', 'my-activity-title-display', 'my-activity-subtitle-display', 'my-activity');
+                setupTitleEdit('my-productivity-title-form', 'my-productivity-title', 'my-productivity-subtitle', 'my-productivity-title-display', 'my-productivity-subtitle-display', 'my-productivity');
+
+                // --- Show edit options only on clicking Edit/Save button ---
+                document.querySelectorAll('.card').forEach(card => {
+                    const editBtn = card.querySelector('.edit-toggle');
+                    if (!editBtn) return;
+                    editBtn.addEventListener('click', () => {
+                        card.querySelectorAll('.edit-section').forEach(section => {
+                            section.classList.toggle('hidden');
+                        });
+                        // Show/hide the saved data list
+                        const list = card.querySelector('ul[id$="-list"]');
+                        if (list) {
+                            list.classList.toggle('hidden');
+                            // Only update the list if now visible
+                            if (!list.classList.contains('hidden')) {
+                                const chartId = list.id.replace('-list', '');
+                                let chart;
+                                switch (chartId) {
+                                    case 'user-growth': chart = userGrowthChart; break;
+                                    case 'sales-distribution': chart = salesDistributionChart; break;
+                                    case 'my-projects': chart = myProjectsChart; break;
+                                    case 'my-activity': chart = myActivityChart; break;
+                                    case 'my-productivity': chart = myProductivityChart; break;
+                                }
+                                if (chart) updateList(chartId, chart);
+                            }
+                        }
+                        // Toggle button text and icon
+                        if (editBtn.textContent.trim().endsWith('Edit')) {
+                            editBtn.innerHTML = `<i class="bx bx-save"></i> Save`;
+                        } else {
+                            editBtn.innerHTML = `<i class="bx bx-edit"></i> Edit`;
+                        }
+                    });
+                });
+            </script>
+</body>
+
+</html>

@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login Page for Admin Dashboard">
+    <meta name="keywords" content="login, dashboard, admin, responsive, boxicons">
+    <meta name="author" content="Admin Dashboard">
+    <title>Login - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* UNIFIED DASHBOARD STYLE */
+        @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #6b7280;
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --sidebar-bg: #1f2937;
+            --sidebar-text: #ffffff;
+            --content-radius: 1.5rem;
+            --card-radius: 1.25rem;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1f2937;
+            --text-color: #ffffff;
+            --sidebar-bg: #111827;
+            --sidebar-text: #d1d5db;
+        }
+
+        body {
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #06b6d4 100%);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: "Poppins", sans-serif;
+            font-weight: 600;
+            font-style: normal;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            transition: transform 0.3s ease, background-color 0.3s;
+            border-top-right-radius: var(--content-radius);
+            border-bottom-right-radius: var(--content-radius);
+            box-shadow: 2px 0 16px rgba(59, 130, 246, 0.08);
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--secondary-color);
+            border-top-right-radius: var(--content-radius);
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            padding: 1rem 1.5rem;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s, transform 0.2s, box-shadow 0.3s;
+            border-radius: 0.75rem;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a:focus,
+        .sidebar-nav a.bg-gray-700 {
+            transition: .5s;
+            background: linear-gradient(90deg, var(--primary-color) 60%, var(--secondary-color) 100%);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.10);
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin-left: 250px;
+            background: linear-gradient(120deg, #f0f4ff 0%, #f9fafb 100%);
+            border-radius: var(--content-radius);
+            box-shadow: 0 2px 24px rgba(59, 130, 246, 0.06);
+            border: 1.5px solid #e5e7eb;
+            padding: 2rem;
+            width: calc(100vw - 250px);
+            overflow: auto;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .login-container {
+                margin-left: 0;
+                border-radius: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 1rem;
+                border-radius: 0.75rem;
+            }
+
+            .login-table th,
+            .login-table td {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+                border-radius: 0.4rem;
+            }
+
+            .login-container {
+                padding: 0.5rem;
+                border-radius: 0.75rem;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--bg-color);
+            border: 1.5px solid var(--secondary-color);
+            border-radius: var(--card-radius);
+            padding: 1.5rem;
+            transition: transform 0.35s cubic-bezier(.4, 2, .6, 1), box-shadow 0.3s, border-color 0.3s, background 0.3s;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.04);
+            will-change: transform, box-shadow;
+            max-width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
+        .card:hover,
+        .card:focus {
+            transform: scale(1.045) translateY(-6px);
+            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.18);
+            border-color: var(--primary-color);
+            background: linear-gradient(120deg, #e0eaff 0%, #f3f6fd 100%);
+            z-index: 2;
+        }
+
+        /* Tables */
+        .login-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background-color: var(--bg-color);
+            transition: background-color 0.3s;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.04);
+        }
+
+        .login-table th,
+        .login-table td {
+            padding: 1rem;
+            border: 1px solid var(--secondary-color);
+            text-align: left;
+            transition: background-color 0.3s, color 0.3s, transform 0.2s;
+            border-radius: 0.5rem;
+        }
+
+        .login-table th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .login-table tbody tr {
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .login-table tbody tr:hover,
+        .login-table tbody tr:focus {
+            background-color: rgba(59, 130, 246, 0.12);
+            transform: scale(1.01) translateX(6px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.12);
+            z-index: 1;
+        }
+
+        /* Search Bar & Inputs */
+        .search-bar input,
+        .filter-select,
+        select,
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--secondary-color);
+            border-radius: 0.75rem;
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+            background: #f3f6fd;
+        }
+
+        .search-bar input:focus,
+        .filter-select:focus,
+        select:focus,
+        input:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            outline: none;
+            background: #e8f0fe;
+        }
+
+        /* Buttons */
+        button,
+        [type="submit"] {
+            transition: background-color 0.3s, color 0.3s, transform 0.2s;
+            border-radius: 0.5rem;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background: linear-gradient(90deg, #6366f1 60%, #3b82f6 100%);
+            color: #fff;
+            padding: 0.5rem 1.5rem;
+        }
+
+        button:hover,
+        [type="submit"]:hover {
+            background: linear-gradient(90deg, #06b6d4 60%, #3b82f6 100%);
+            color: #fff;
+            transform: scale(1.08);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.18);
+        }
+
+        /* Utility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+
+<body data-theme="light" class="min-h-screen flex bg-gradient-to-br from-blue-400 via-indigo-400 to-cyan-400">
+    <!-- Sidebar -->
+    <aside class="sidebar shadow-2xl">
+        <div class="sidebar-header flex items-center justify-center py-6">
+            <h2 class="text-2xl font-extrabold tracking-wide text-white">Admin Dashboard</h2>
+        </div>
+        <nav class="sidebar-nav flex flex-col gap-2 mt-6">
+            <a href="/dashboard"><i class="bx bx-home-alt mr-2"></i> Dashboard</a>
+            <a href="/analytics"><i class="bx bx-bar-chart-alt-2 mr-2"></i> Progress</a>
+            <a href="/users"><i class="bx bx-user mr-2"></i> Students</a>
+            <a href="/profile"><i class="bx bx-id-card mr-2"></i> Profile</a>
+            <a href="/settings"><i class="bx bx-cog mr-2"></i> Settings</a>
+            <a href="/logout" class="bg-gradient-to-r from-blue-600 to-indigo-500 text-white font-bold shadow-lg"><i
+                    class="bx bx-note mr-2"></i> Notes</a>
+        </nav>
+    </aside>
+
+    <div>
+        <button id="fullscreen-toggle" class="rounded-full bg-gray-200 dark:bg-gray-700"
+            aria-label="Toggle fullscreen">
+            <i class="bx bx-fullscreen"></i>
+        </button>
+        
+    </div>
+
+    <!-- Main Content -->
+    <main
+        class="login-container flex-1 flex flex-col items-center justify-center px-4 py-10 bg-transparent min-h-screen transition-all duration-700"
+        style="max-width: 1200px; margin-left: 300px auto; width: calc(100vw);">
+        <div class="w-full max-w-5xl space-y-12 animate__animated animate__fadeIn">
+            <!-- Smart Notes Card -->
+            <section
+                class="card bg-white/80 shadow-xl border-0 transition-transform duration-500 hover:scale-105 animate__animated animate__fadeInUp">
+                <h2 class="text-2xl font-bold mb-6 text-blue-700 flex items-center gap-2"><i class="bx bx-edit"></i>
+                    Smart Notes</h2>
+                <form id="note-form" class="space-y-4">
+                    <div>
+                        <label for="note-title" class="block mb-1 font-semibold text-gray-700">Title</label>
+                        <input type="text" id="note-title" name="note-title" required
+                            class="w-full border border-blue-200 p-3 rounded-lg focus:ring-2 focus:ring-blue-400 bg-blue-50 font-medium transition-all duration-300">
+                    </div>
+                    <div>
+                        <label for="note-content" class="block mb-1 font-semibold text-gray-700">Content</label>
+                        <textarea id="note-content" name="note-content" rows="4" required
+                            class="w-full border border-blue-200 p-3 rounded-lg focus:ring-2 focus:ring-blue-400 bg-blue-50 font-medium transition-all duration-300"></textarea>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <button type="submit"
+                            class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-500 text-white font-bold rounded-lg shadow-lg hover:scale-105 transition-all duration-300">Add
+                            Note</button>
+                        <button type="button" id="ai-summary-btn"
+                            class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-400 text-white font-bold rounded-lg shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"><i
+                                class="bx bx-bulb"></i>AI Summarize</button>
+                        <button type="button" id="voice-note-btn"
+                            class="w-full py-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-white font-bold rounded-lg shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"><i
+                                class="bx bx-microphone"></i>Voice Note</button>
+                    </div>
+                </form>
+            </section>
+            <!-- Notes List Card -->
+            <section
+                class="card bg-white/80 shadow-xl border-0 transition-transform duration-500 hover:scale-105 animate__animated animate__fadeInUp">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-blue-700 flex items-center gap-2"><i class="bx bx-notepad"></i>
+                        Your Notes</h2>
+                    <div class="search-bar flex gap-2">
+                        <label for="note-search" class="sr-only">Search notes</label>
+                        <input type="text" id="note-search" placeholder="Search notes..."
+                            class="w-56 border border-blue-200 p-2 rounded-lg bg-blue-50 focus:ring-2 focus:ring-blue-400 font-medium transition-all duration-300">
+                        <button id="sort-notes-btn"
+                            class="px-3 py-2 bg-gradient-to-r from-indigo-500 to-blue-400 text-white font-bold rounded-lg shadow hover:scale-105 transition-all duration-300 flex items-center gap-1"><i
+                                class="bx bx-sort"></i>Sort</button>
+                    </div>
+                </div>
+                <div id="notes-list" class="space-y-6">
+                    <!-- Notes will be rendered here -->
+                </div>
+            </section>
+            <!-- Export PDF Card -->
+            <section
+                class="card bg-white/80 shadow-xl border-0 flex flex-col items-center transition-transform duration-500 hover:scale-105 animate__animated animate__fadeInUp">
+                <h2 class="text-2xl font-bold mb-4 text-blue-700 flex items-center gap-2"><i class="bx bx-download"></i>
+                    Export Notes as PDF</h2>
+                <button id="export-notes-pdf"
+                    class="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-400 text-white font-bold rounded-lg shadow-lg flex items-center gap-2 hover:scale-105 transition-all duration-300">
+                    <i class="bx bx-download"></i> Download Notes PDF
+                </button>
+            </section>
+            <!-- Pomodoro Timer Card -->
+            <section
+                class="card bg-white/80 shadow-xl border-0 flex flex-col items-center transition-transform duration-500 hover:scale-105 animate__animated animate__fadeInUp">
+                <h2 class="text-2xl font-bold mb-4 text-pink-600 flex items-center gap-2"><i class="bx bx-timer"></i>
+                    Pomodoro Focus Timer</h2>
+                <div class="flex flex-col items-center gap-4">
+                    <div id="pomodoro-timer" class="text-4xl font-mono font-bold text-pink-700">25:00</div>
+                    <div class="flex gap-2">
+                        <button id="pomodoro-start"
+                            class="px-4 py-2 bg-gradient-to-r from-pink-500 to-red-400 text-white rounded-lg font-bold shadow hover:scale-105 transition">Start</button>
+                        <button id="pomodoro-pause"
+                            class="px-4 py-2 bg-gradient-to-r from-gray-400 to-gray-600 text-white rounded-lg font-bold shadow hover:scale-105 transition">Pause</button>
+                        <button id="pomodoro-reset"
+                            class="px-4 py-2 bg-gradient-to-r from-blue-400 to-indigo-400 text-white rounded-lg font-bold shadow hover:scale-105 transition">Reset</button>
+                    </div>
+                    <div class="text-xs text-gray-500">Stay productive with 25-min focus sessions!</div>
+                </div>
+            </section>
+            <!-- Theme Switcher Card -->
+            <section
+                class="card bg-white/80 shadow-xl border-0 flex flex-col items-center transition-transform duration-500 hover:scale-105 animate__animated animate__fadeInUp">
+                <h2 class="text-2xl font-bold mb-4 text-indigo-700 flex items-center gap-2"><i class="bx bx-moon"></i>
+                    Theme Switcher</h2>
+                <button id="theme-toggle-btn"
+                    class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-blue-400 text-white font-bold rounded-lg shadow-lg flex items-center gap-2 hover:scale-105 transition-all duration-300">
+                    <i class="bx bx-moon"></i> Toggle Dark/Light Mode
+                </button>
+            </section>
+        </div>
+    </main>
+    <!-- Animate.css CDN for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <!-- jsPDF and html2canvas CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // Notes CRUD in localStorage
+        function getNotes() {
+            return JSON.parse(localStorage.getItem('notes')) || [];
+        }
+        function saveNotes(notes) {
+            localStorage.setItem('notes', JSON.stringify(notes));
+        }
+        function renderNotes(filter = '', sortBy = 'date') {
+            let notes = getNotes();
+            const notesList = document.querySelector('#notes-list');
+            notesList.innerHTML = '';
+            // Sort notes
+            if (sortBy === 'title') {
+                notes = notes.sort((a, b) => a.title.localeCompare(b.title));
+            } else {
+                notes = notes.sort((a, b) => new Date(b.date) - new Date(a.date));
+            }
+            notes.filter(note =>
+                note.title.toLowerCase().includes(filter) ||
+                note.content.toLowerCase().includes(filter)
+            ).forEach((note, idx) => {
+                const noteCard = document.createElement('div');
+                noteCard.className = "rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 shadow-md p-6 flex flex-col gap-2 relative group transition hover:shadow-xl animate__animated animate__fadeIn";
+                noteCard.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-blue-800">${note.title}</h3>
+                        <span class="text-xs text-gray-400">${note.date}</span>
+                    </div>
+                    <p class="text-gray-700 font-medium whitespace-pre-line">${note.content}</p>
+                    <button onclick="deleteNote(${idx})" class="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold opacity-0 group-hover:opacity-100 transition">Delete</button>
+                    <button onclick="copyNote('${encodeURIComponent(note.title)}','${encodeURIComponent(note.content)}')" class="absolute bottom-3 right-3 bg-green-500 text-white px-3 py-1 rounded-lg text-xs font-bold opacity-0 group-hover:opacity-100 transition">Copy</button>
+                `;
+                notesList.appendChild(noteCard);
+            });
+        }
+        window.deleteNote = function (idx) {
+            const notes = getNotes();
+            notes.splice(idx, 1);
+            saveNotes(notes);
+            renderNotes(document.querySelector('#note-search').value.toLowerCase(), window.currentSort || 'date');
+        };
+        window.copyNote = function (title, content) {
+            const text = decodeURIComponent(title) + "\n\n" + decodeURIComponent(content);
+            navigator.clipboard.writeText(text);
+            alert('Note copied to clipboard!');
+        };
+
+        document.querySelector('#note-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.querySelector('#note-title').value.trim();
+            const content = document.querySelector('#note-content').value.trim();
+            if (!title || !content) return;
+            const notes = getNotes();
+            notes.unshift({
+                title,
+                content,
+                date: new Date().toLocaleString()
+            });
+            saveNotes(notes);
+            e.target.reset();
+            renderNotes(document.querySelector('#note-search').value.toLowerCase(), window.currentSort || 'date');
+        });
+
+        document.querySelector('#note-search').addEventListener('input', (e) => {
+            renderNotes(e.target.value.toLowerCase(), window.currentSort || 'date');
+        });
+
+        // Sort notes
+        window.currentSort = 'date';
+        document.getElementById('sort-notes-btn').addEventListener('click', function () {
+            window.currentSort = window.currentSort === 'date' ? 'title' : 'date';
+            renderNotes(document.querySelector('#note-search').value.toLowerCase(), window.currentSort);
+            this.innerHTML = window.currentSort === 'date'
+                ? '<i class="bx bx-sort"></i>Sort'
+                : '<i class="bx bx-sort"></i>Sort A-Z';
+        });
+
+        document.addEventListener('DOMContentLoaded', () => renderNotes());
+
+        // Export Notes as PDF (each note on a separate page, all content visible)
+        document.getElementById('export-notes-pdf').addEventListener('click', async function () {
+            const notes = getNotes();
+            if (!notes.length) {
+                alert('No notes to export!');
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'pt',
+                format: 'a4'
+            });
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 40;
+            notes.forEach((note, idx) => {
+                if (idx !== 0) pdf.addPage();
+                let y = margin;
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(20);
+                pdf.setTextColor('#2563eb');
+                pdf.text(note.title, margin, y);
+                y += 24;
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(11);
+                pdf.setTextColor('#6b7280');
+                pdf.text(note.date, margin, y);
+                y += 20;
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(13);
+                pdf.setTextColor('#374151');
+                // Split content into lines to fit page width
+                const lines = pdf.splitTextToSize(note.content, pageWidth - margin * 2);
+                lines.forEach(line => {
+                    if (y + 18 > pageHeight - margin) {
+                        pdf.addPage();
+                        y = margin;
+                    }
+                    pdf.text(line, margin, y);
+                    y += 18;
+                });
+            });
+            // Add footer
+            const footer = `Generated by Study Dashboard © ${(new Date()).getFullYear()}`;
+            for (let i = 1; i <= pdf.getNumberOfPages(); i++) {
+                pdf.setPage(i);
+                pdf.setFontSize(10);
+                pdf.setTextColor('#6b7280');
+                pdf.text(footer, pageWidth / 2, pageHeight - 20, { align: 'center' });
+            }
+            pdf.save('My_Notes.pdf');
+        });
+
+        // Button color and hover for operation buttons
+        document.addEventListener('DOMContentLoaded', function () {
+            // Export PDF button
+            const exportBtn = document.getElementById('export-notes-pdf');
+            if (exportBtn) {
+                exportBtn.style.background = 'linear-gradient(90deg, #22c55e 60%, #14b8a6 100%)';
+                exportBtn.style.color = '#fff';
+                exportBtn.style.transition = 'background 0.3s, transform 0.2s';
+                exportBtn.addEventListener('mouseover', function () {
+                    exportBtn.style.background = 'linear-gradient(90deg, #06b6d4 60%, #22c55e 100%)';
+                    exportBtn.style.transform = 'scale(1.08)';
+                });
+                exportBtn.addEventListener('mouseout', function () {
+                    exportBtn.style.background = 'linear-gradient(90deg, #22c55e 60%, #14b8a6 100%)';
+                    exportBtn.style.transform = 'scale(1)';
+                });
+            }
+
+            // Delete buttons (appear on hover of note card)
+            function styleDeleteButtons() {
+                document.querySelectorAll('#notes-list .bg-red-500').forEach(btn => {
+                    btn.style.background = 'linear-gradient(90deg, #ef4444 60%, #f59e42 100%)';
+                    btn.style.color = '#fff';
+                    btn.style.transition = 'background 0.3s, transform 0.2s';
+                    btn.addEventListener('mouseover', function () {
+                        btn.style.background = 'linear-gradient(90deg, #f59e42 60%, #ef4444 100%)';
+                        btn.style.transform = 'scale(1.08)';
+                    });
+                    btn.addEventListener('mouseout', function () {
+                        btn.style.background = 'linear-gradient(90deg, #ef4444 60%, #f59e42 100%)';
+                        btn.style.transform = 'scale(1)';
+                    });
+                });
+                // Copy buttons
+                document.querySelectorAll('#notes-list .bg-green-500').forEach(btn => {
+                    btn.style.background = 'linear-gradient(90deg, #22c55e 60%, #14b8a6 100%)';
+                    btn.style.color = '#fff';
+                    btn.style.transition = 'background 0.3s, transform 0.2s';
+                    btn.addEventListener('mouseover', function () {
+                        btn.style.background = 'linear-gradient(90deg, #14b8a6 60%, #22c55e 100%)';
+                        btn.style.transform = 'scale(1.08)';
+                    });
+                    btn.addEventListener('mouseout', function () {
+                        btn.style.background = 'linear-gradient(90deg, #22c55e 60%, #14b8a6 100%)';
+                        btn.style.transform = 'scale(1)';
+                    });
+                });
+            }
+            // Initial call and on notes render
+            styleDeleteButtons();
+            const observer = new MutationObserver(styleDeleteButtons);
+            const notesList = document.getElementById('notes-list');
+            if (notesList) {
+                observer.observe(notesList, { childList: true, subtree: true });
+            }
+        });
+
+        // Pomodoro Timer Feature
+        let pomodoroInterval, pomodoroTime = 25 * 60, pomodoroRunning = false;
+        const timerDisplay = document.getElementById('pomodoro-timer');
+        function updatePomodoroDisplay() {
+            const min = String(Math.floor(pomodoroTime / 60)).padStart(2, '0');
+            const sec = String(pomodoroTime % 60).padStart(2, '0');
+            timerDisplay.textContent = `${min}:${sec}`;
+        }
+        function startPomodoro() {
+            if (pomodoroRunning) return;
+            pomodoroRunning = true;
+            pomodoroInterval = setInterval(() => {
+                if (pomodoroTime > 0) {
+                    pomodoroTime--;
+                    updatePomodoroDisplay();
+                } else {
+                    clearInterval(pomodoroInterval);
+                    pomodoroRunning = false;
+                    alert('Pomodoro session complete! Take a break.');
+                }
+            }, 1000);
+        }
+        function pausePomodoro() {
+            clearInterval(pomodoroInterval);
+            pomodoroRunning = false;
+        }
+        function resetPomodoro() {
+            clearInterval(pomodoroInterval);
+            pomodoroTime = 25 * 60;
+            pomodoroRunning = false;
+            updatePomodoroDisplay();
+        }
+        document.getElementById('pomodoro-start').onclick = startPomodoro;
+        document.getElementById('pomodoro-pause').onclick = pausePomodoro;
+        document.getElementById('pomodoro-reset').onclick = resetPomodoro;
+        updatePomodoroDisplay();
+
+        // Theme Switcher Feature
+        const themeBtn = document.getElementById('theme-toggle-btn');
+        themeBtn.addEventListener('click', () => {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            themeBtn.innerHTML = isDark
+                ? '<i class="bx bx-moon"></i> Toggle Dark/Light Mode'
+                : '<i class="bx bx-sun"></i> Toggle Dark/Light Mode';
+        });
+
+        // AI Summarize Feature (demo: summarize note content to 1-2 sentences)
+        document.getElementById('ai-summary-btn').addEventListener('click', function () {
+            const content = document.getElementById('note-content').value.trim();
+            if (!content) {
+                alert('Please enter note content to summarize.');
+                return;
+            }
+            // Simple summarization: take first and last sentences
+            const sentences = content.match(/[^\.!\?]+[\.!\?]+/g) || [content];
+            let summary = '';
+            if (sentences.length > 2) {
+                summary = sentences[0] + ' ... ' + sentences[sentences.length - 1];
+            } else {
+                summary = content;
+            }
+            document.getElementById('note-content').value = summary;
+            alert('AI Summary generated!');
+        });
+
+        // Voice Note Feature (Speech-to-Text)
+        document.getElementById('voice-note-btn').addEventListener('click', function () {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Sorry, your browser does not support speech recognition.');
+                return;
+            }
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            recognition.start();
+            document.getElementById('voice-note-btn').textContent = 'Listening...';
+            recognition.onresult = function (event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('note-content').value += (document.getElementById('note-content').value ? '\n' : '') + transcript;
+                document.getElementById('voice-note-btn').textContent = 'Voice Note';
+            };
+            recognition.onerror = function () {
+                document.getElementById('voice-note-btn').textContent = 'Voice Note';
+                alert('Could not recognize speech. Try again.');
+            };
+            recognition.onend = function () {
+                document.getElementById('voice-note-btn').textContent = 'Voice Note';
+            };
+        });
+        // --- Fullscreen Toggle ---
+        document.getElementById('fullscreen-toggle').onclick = function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        };
+    </script>
+</body>
